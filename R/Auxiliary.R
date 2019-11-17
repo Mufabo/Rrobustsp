@@ -1,0 +1,59 @@
+# madn computes the normalized median absolute deviation estimate of 
+# scale, i.e.,
+# 
+# mu_hat = arg min_mu SUM_i rho_TUK(y_i - mu)
+# 
+#    INPUTS: 
+#            y: data vector of size N x 1
+# 
+#    OUTPUT:  
+#            sig: normalized median absolute deviations scale estimate
+# @export
+madn <- function(y)
+    {
+    # Compute the auxiliary scale estimate as 
+    if (is.complex(y)) const <- 1.20112 else const <- 1.4815
+    return (const*median(abs(y-median(y))))
+}
+
+
+# Huber's score function psi: input is N x 1 data vector x which can be complex
+# or real and threshold contant c
+# @export
+psihub <- function(x,c){
+    return (x*(abs(x)<=c) + c*sign(x)*(abs(x)>c))
+}
+
+# @export
+psituk <- function(x, c){
+    return (x*((1-(abs(x)/c)^2)^2 )*(abs(x)<=c))
+}
+
+# @export
+rhohub <- function(x, c){
+    return ((abs(x)^2)*(abs(x)<=c) + (2*c*abs(x)-c^2)*(abs(x)>c))
+}
+
+# @export
+rhotuk <- function(x, c){
+    return ((c^2/3)*((1-(1-(abs(x)/c)^2)^3)*(abs(x)<=c) + (abs(x)>c) ))
+}
+
+# @export
+soft_thresh <- function(x, t){
+    s <- abs(x) - t
+    s <- (s+abs(s))/2
+    return (if (is.complex(x)) x*s/abs(x) else sign(x)*s)
+}
+
+# @export
+whub <- function(absx, c){
+    wx = 1*(Re(absx)<=c) + (c*(1/absx))*(Re(absx)>c)
+    wx[absx==0] = 1
+    return (wx)
+}
+
+# @export
+wtuk <- function(absx, c){
+    return (((1-(absx/c)^2)^2)*(Re(absx)<=c))
+}
