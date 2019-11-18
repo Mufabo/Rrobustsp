@@ -114,14 +114,16 @@ MscaleHUB <- function(y, c=1.345, max_iters=1000, tol_err=1e-5){
   N <- length(y)
 
   # consistency with the standard deviation at the Gaussian
-  set.seed(1)
-  delta <- mean(rhohub(rnorm(10000), c))
-
+  # set.seed(1)
+  # delta <- mean(rhohub(rnorm(10000), c))
+  delta <- 0.9379 # delta from matlab
   for (n in 0:max_iters){
     w_n <- whub(abs(y)/sigma_n, c)
 
     sigma_n_plus1 <- sqrt(1/(N*delta)*sum(w_n*y^2))
-    if (abs(sigma_n_plus1/sigma_n-1)>tol_err) sigma_n <- sigma_n_plus1 else break
+    if (abs(sigma_n_plus1/sigma_n-1)>tol_err)
+      {sigma_n <- sigma_n_plus1}
+    else break
   }
 
   return (sigma_n)
@@ -150,9 +152,9 @@ MscaleTUK <- function(y, c=4.685, max_iters=1000, tol_err=1e-5){
   N <- length(y)
 
   # consistency with the standard deviation at the Gaussian
-  set.seed(1)
-  delta <- mean(rhotuk(rnorm(10000), c))
-
+  # set.seed(1)
+  # delta <- mean(rhotuk(rnorm(10000), c))
+  delta <- 0.8788 # delta from matlab
   for (n in 0:max_iters){
     w_n <- wtuk(abs(y)/sigma_n, c)
 
