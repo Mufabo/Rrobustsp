@@ -2,26 +2,20 @@
 % Please edit documentation in R/Location_Scale.R
 \name{Mlocscale}
 \alias{Mlocscale}
-\title{% Mlocscale computes Huber's M-estimates of location and scale.
-%
-%   INPUTS:
-%           y: real valued data vector of size N x 1
-%           c: tuning constant c>=0
-%
-%   OUTPUT:
-%           mu_hat: Huber's M-estimate of location
-%           sigma_hat: Huber's M-estimate of scale}
+\title{Mlocscale computes Huber's M-estimates of location and scale.}
 \usage{
 Mlocscale(y, c = NULL)
 }
+\arguments{
+\item{y:}{real valued data vector of size N x 1}
+
+\item{c:}{tuning constant c>=0}
+}
+\value{
+mu_hat: Huber's M-estimate of location
+
+sigma_hat: Huber's M-estimate of scale
+}
 \description{
-% Mlocscale computes Huber's M-estimates of location and scale.
-%
-%   INPUTS:
-%           y: real valued data vector of size N x 1
-%           c: tuning constant c>=0
-%
-%   OUTPUT:
-%           mu_hat: Huber's M-estimate of location
-%           sigma_hat: Huber's M-estimate of scale
+Mlocscale computes Huber's M-estimates of location and scale.
 }

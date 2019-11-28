@@ -303,12 +303,59 @@ hublassopath <- function(y, X, c = NULL, L = 120, eps =10^-3, intcpt = T, reltol
   # Default: approx 95 efficiency for Gaussian errors
   if(is.null(c)){if(real_data) c <- 1.3414 else c <- 1.215}
 
-  # tmp <- hubreg(y, rep(1, n), c)
-  # TODO continue when done with hubreg
+  tmp <- hubreg(y, matrix(1, n, 1), c)
+  locy <- tmp[[1]]
+  sig0 <- tmp[[2]]
+
+  if(intcpt){
+    # center data
+    ync <- y
+    Xnc <- X
+
+    meanX <- colMeans(X)
+    X <- X - meanX
+    y <- y - locy
+  }
+
+  # standardize the predictor to unit norm columns
+  sdX <- sqrt(colSums(X * Conj(X)))
+  X <- X / sdX
+
+  # compute the smallest penalty value yielding a zero solution
+  yc <- psihub(y / sig0, c) * sig0
+  lam0 <- norm(t(X) %*% yc, type = "i")
+
+  lamgrid <- eps^((0:L) / L) * lam0
+  B <- matrix(0, p, L+1)
+  sig <- matrix(0, 1, L+1)
+  sig[1] <- sig0
+
+  for(jj in 1:L){
+    tmp <- hublasso(y, X, c, lamgrid[jj+1], B[,jj], sig[jj], reltol, printitn)
+    B[, jj+1] <- tmp[[1]]
+    sig[jj+1] <- tmp[[2]]
+  }
+
+  B[abs(B) < 5e-8] <- 0
+  DF <- colSums(abs(B) != 0)
+  con <- sqrt
+
+  if(n > p) gBIC <- 2 * n * log(sig * con) + DF * log(n) else gBIC <- NULL
+
+  B <- B / sdX
+
+  # compute the intercept if in the model
+  if(intcpt) B0 <- locy - meanX * B else B <- NULL
+
+  stats <- list(gBIC, sig, lamgrid)
+  names(stats) <- c('gBIC', 'sigma', 'Lambda')
+
+  return( list(B, B0, stats))
 }
 
 
-
+#'   hubreg: regression and scale using Huber's criterion
+#'
 #'   hubreg computes the joint M-estimates of regression and scale using
 #'   Huber's criterion. Function works for both real- and complex-valued data.
 #'
@@ -319,7 +366,8 @@ hublassopath <- function(y, X, c = NULL, L = 120, eps =10^-3, intcpt = T, reltol
 #'             If the model has an intercept, then first column needs to be a
 #'             vector of ones.
 #'@param    c: numeric threshold constant of Huber's function
-#'@param    sig0: (numeric) initial estimator of scale [default: SQRT(1/(n-p)*RSS)]
+#'@param    sig0: (numeric) initial estimator of scale \cr
+#'          default = SQRT(1/(n-p)*RSS)
 #'@param    b0: initial estimator of regression (default: LSE)
 #'@param    printitn: print iteration number (default = 0, no printing)
 #'@param    iter_max: maximum number of iterations. \cr default = 2000
@@ -328,6 +376,20 @@ hublassopath <- function(y, X, c = NULL, L = 120, eps =10^-3, intcpt = T, reltol
 #'@return    b1: the regression coefficient vector estimate
 #'@return    sig1: the estimate of scale
 #'@return    iter: the # of iterations
+#'
+#'@references
+#'uses \code{\link[MASS]{ginv}} from the MASS package
+#'
+#'@examples
+#'y <- c(1.0347, 0.7269, -0.3034, 0.2939, -0.7873)
+#'X <- matrix(c(0.884, -1.1471, -1.0689, -0.8095, -2.9443, 1.4384, 0.3252, -0.7549, 1.3703, -1.7115), 5, 2)
+#'
+#'hubreg(y, X)
+#'hubreg(y+1i, X)
+#'hubreg(y+1i, X+1i)
+#'hubreg(y, X+1i)
+#'@note
+#'results slightly different from MATLAB
 #'@export
 hubreg <- function(y, X, c = NULL, sig0 = NULL, b0 = NULL, printitn = 0, iter_max = 2000, errortol = 1e-5){
   n <- nrow(X)
@@ -337,7 +399,7 @@ hubreg <- function(y, X, c = NULL, sig0 = NULL, b0 = NULL, printitn = 0, iter_ma
   # Default: approx 95 efficiency for Gaussian errors
   if(is.null(c)){if(real_data) c <- 1.3415 else c <- 1.215}
 
-  if(is.null(b0)) b0 <- solve(X, y)
+  if(is.null(b0)) b0 <- ginv(X) %*% y
 
   # use unbiased residual sum of squares as initial estimate of scale
   if(is.null(sig0)){sig0 <- norm(matrix(y - X %*% b0), type = "2") /
@@ -346,15 +408,15 @@ hubreg <- function(y, X, c = NULL, sig0 = NULL, b0 = NULL, printitn = 0, iter_ma
   csq <- c^2
 
   # consistency factor for scale
-  if(complex_data){
-    qn <- pchisq(2 * csq, 2)
-    alpha <- pchisq(2 * csq, 4) + csq * (1 - qn)
-  } else{
+  if(real_data){
     qn <- pchisq(csq, 1)
     alpha <- pchisq(csq, 3) + csq * (1 - qn)
+  } else{
+    qn <- pchisq(2 * csq, 2)
+    alpha <- pchisq(2 * csq, 4) + csq * (1 - qn)
   }
 
-  Z <- pinv(X)
+  Z <- ginv(X)
 
   con <- sqrt((n - p) * alpha)
 
@@ -370,9 +432,24 @@ hubreg <- function(y, X, c = NULL, sig0 = NULL, b0 = NULL, printitn = 0, iter_ma
     psires <- psihub(r / sig1, c) * sig1
 
     # Step 4: regress X on pseudo-residual
-    update <- Z * psires
+    update <- Z %*% psires
 
     # Step 5: update the beta
     b1 <- b0 + update
+
+    # Step 6 check convergence
+    crit2 <- norm(matrix(update), type = "2") / norm(matrix(b0))
+    if(printitn > 0 & iter %% printitn) sprintf('hubreg: crit(%4d) = %.9f\n',iter,crit2)
+
+    if(is.na(crit2) | errortol) break
+
+    b0 <- b1
+    sig0 <- sig1
+
+    if(iter == iter_max) sprintf('error!!! MAXiter = %d crit2 = %.7f\n',iter,crit2)
   }
+
+  return( list(b1, sig1, iter))
 }
+
+

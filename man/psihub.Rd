@@ -2,12 +2,16 @@
 % Please edit documentation in R/Auxiliary.R
 \name{psihub}
 \alias{psihub}
-\title{Huber's score function psi: input is N x 1 data vector x which can be complex
-or real and threshold contant c}
+\title{Huber's score function}
 \usage{
 psihub(x, c)
 }
+\arguments{
+\item{x}{is N x 1 data vector x which can be complex
+or real}
+
+\item{threshold}{constant c}
+}
 \description{
-Huber's score function psi: input is N x 1 data vector x which can be complex
-or real and threshold contant c
+Huber's score function
 }

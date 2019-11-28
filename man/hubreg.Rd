@@ -2,8 +2,7 @@
 % Please edit documentation in R/Regression.R
 \name{hubreg}
 \alias{hubreg}
-\title{hubreg computes the joint M-estimates of regression and scale using
-  Huber's criterion. Function works for both real- and complex-valued data.}
+\title{hubreg: regression and scale using Huber's criterion}
 \usage{
 hubreg(y, X, c = NULL, sig0 = NULL, b0 = NULL, printitn = 0,
   iter_max = 2000, errortol = 1e-05)
@@ -18,7 +17,8 @@ vector of ones.}
 
 \item{c:}{numeric threshold constant of Huber's function}
 
-\item{sig0:}{(numeric) initial estimator of scale [default: SQRT(1/(n-p)*RSS)]}
+\item{sig0:}{(numeric) initial estimator of scale \cr
+default = SQRT(1/(n-p)*RSS)}
 
 \item{b0:}{initial estimator of regression (default: LSE)}
 
@@ -38,4 +38,19 @@ iter: the # of iterations
 \description{
 hubreg computes the joint M-estimates of regression and scale using
   Huber's criterion. Function works for both real- and complex-valued data.
+}
+\note{
+results slightly different from MATLAB
+}
+\examples{
+y <- c(1.0347, 0.7269, -0.3034, 0.2939, -0.7873)
+X <- matrix(c(0.884, -1.1471, -1.0689, -0.8095, -2.9443, 1.4384, 0.3252, -0.7549, 1.3703, -1.7115), 5, 2)
+
+hubreg(y, X)
+hubreg(y+1i, X)
+hubreg(y+1i, X+1i)
+hubreg(y, X+1i)
+}
+\references{
+uses \code{\link[MASS]{ginv}} from the MASS package
 }

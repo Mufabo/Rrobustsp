@@ -2,32 +2,19 @@
 % Please edit documentation in R/Location_Scale.R
 \name{MlocHUB}
 \alias{MlocHUB}
-\title{% Mloc_HUB computes Huber's M-estimate of
-% location, i.e.,
-%
-% mu_hat = arg min_mu SUM_i rho_HUB(y_i - mu)
-%
-%
-%   INPUTS:
-%           y: real valued data vector of size N x 1
-%           c: tuning constant c>=0
-%
-%   OUTPUT:
-%           mu_hat: Huber's M-estimate of location}
+\title{Mloc_HUB computes Huber's M-estimate of
+  location, i.e.,}
 \usage{
 MlocHUB(y, c = 1.345, max_iters = 1000, tol_err = 1e-05)
 }
+\arguments{
+\item{y:}{real valued data vector of size N x 1}
+
+\item{c:}{tuning constant c>=0}
+}
+\value{
+mu_hat: Huber's M-estimate of location
+}
 \description{
-% Mloc_HUB computes Huber's M-estimate of
-% location, i.e.,
-%
-% mu_hat = arg min_mu SUM_i rho_HUB(y_i - mu)
-%
-%
-%   INPUTS:
-%           y: real valued data vector of size N x 1
-%           c: tuning constant c>=0
-%
-%   OUTPUT:
-%           mu_hat: Huber's M-estimate of location
+\eqn{mu_hat = arg_{min_mu} \sum{i} rho_{HUB}(y_{i} - \mu)}
 }

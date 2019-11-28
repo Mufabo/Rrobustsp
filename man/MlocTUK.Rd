@@ -2,34 +2,20 @@
 % Please edit documentation in R/Location_Scale.R
 \name{MlocTUK}
 \alias{MlocTUK}
-\title{% Mloc_TUK computes Tukey's M-estimate of
-% location, i.e.,
-%
-% mu_hat = arg min_mu SUM_i rho_TUK(y_i - mu)
-%
-%
-%   INPUTS:
-%           y: real valued data vector of size N x 1
-%           c: tuning constant c>=0
-%
-%   OUTPUT:
-%           mu_hat: Tukey's M-estimate of location
-  @export}
+\title{Mloc_TUK computes Tukey's M-estimate of
+  location, i.e.,}
 \usage{
 MlocTUK(y, c = 4.685, max_iters = 1000, tol_err = 1e-05)
 }
-\description{
-% Mloc_TUK computes Tukey's M-estimate of
-% location, i.e.,
-%
-% mu_hat = arg min_mu SUM_i rho_TUK(y_i - mu)
-%
-%
-%   INPUTS:
-%           y: real valued data vector of size N x 1
-%           c: tuning constant c>=0
-%
-%   OUTPUT:
-%           mu_hat: Tukey's M-estimate of location
+\arguments{
+\item{y:}{real valued data vector of size N x 1}
+
+\item{c:}{tuning constant c>=0}
+}
+\value{
+mu_hat: Tukey's M-estimate of location
   @export
+}
+\description{
+mu_hat = arg min_mu SUM_i rho_TUK(y_i - mu)
 }

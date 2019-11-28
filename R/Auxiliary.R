@@ -1,13 +1,15 @@
+#' normalized median absolute deviation
+#'
 #' madn computes the normalized median absolute deviation estimate of
 #' scale, i.e.,
 #'
 #'mu_hat = arg min_mu SUM_i rho_TUK(y_i - mu)
 #'
-#'   INPUTS:
-#'           y: data vector of size N x 1
-#
-#'   OUTPUT:
-#'           sig: normalized median absolute deviations scale estimate
+#'
+#'@param           y: data vector of size N x 1
+#'
+#'
+#'@return           sig: normalized median absolute deviations scale estimate
 #'@export
 madn <- function(y)
     {
@@ -17,11 +19,19 @@ madn <- function(y)
 }
 
 
-#'Huber's score function psi: input is N x 1 data vector x which can be complex
-#'or real and threshold contant c
+#'Huber's score function
+#'
+#'@param x is N x 1 data vector x which can be complex
+#'or real
+#'
+#'@param threshold constant c
 #'@export
 psihub <- function(x,c){
-    return (x*(abs(x)<=c) + c*sign(x)*(abs(x)>c))
+    if(is.complex(x)){
+        signum_x <- x / abs(x)
+        return (x*(abs(x)<=c) + c*signum_x * (abs(x)>c))
+    }
+    else{return (x*(abs(x)<=c) + c*sign(x)*(abs(x)>c))}
 }
 
 #'@export

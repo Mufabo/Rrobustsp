@@ -1,29 +1,29 @@
-# % Mloc computes the M-estimates of location using an auxiliary scale
-# % estimate. It uses the iterative reweighted least squares (IRWLS) algorithm
-# %
-# % INPUTS:
-# %       y : (numeric) data vector of size N x 1
-# % lossfun : (string) either 'huber' or 'tukey' to identify the desired
-# %           loss function
-# % OUTPUT:
-# %           mu_hat: M-estimate of location
+#'  Mloc computes the M-estimates of location using an auxiliary scale
+#'  estimate. It uses the iterative reweighted least squares (IRWLS) algorithm
+#'
+#'
+#'@param         y : (numeric) data vector of size N x 1
+#'@param   lossfun : (string) either 'huber' or 'tukey' to identify the desired
+#'             loss function
+#'
+#'@return             mu_hat: M-estimate of location
 #' @export
 Mloc <- function(y, lossfun){
   return (Mreg(y, numeric(length(y)), lossfun, median(y)))
 }
 
-#' % Mloc_HUB computes Huber's M-estimate of
-#' % location, i.e.,
-#' %
-#' % mu_hat = arg min_mu SUM_i rho_HUB(y_i - mu)
-#' %
-#' %
-#' %   INPUTS:
-#' %           y: real valued data vector of size N x 1
-#' %           c: tuning constant c>=0
-#' %
-#' %   OUTPUT:
-#' %           mu_hat: Huber's M-estimate of location
+#'   Mloc_HUB computes Huber's M-estimate of
+#'   location, i.e.,
+#'
+#'   \eqn{mu_hat = arg_{min_mu} \sum{i} rho_{HUB}(y_{i} - \mu)}
+#'
+#'
+#'
+#'@param            y: real valued data vector of size N x 1
+#'@param             c: tuning constant c>=0
+#'
+#'
+#'@return             mu_hat: Huber's M-estimate of location
 #' @export
 MlocHUB <- function(y,c=1.345, max_iters=1000, tol_err=1e-5){
   # previously computated scale estimate
@@ -43,15 +43,15 @@ MlocHUB <- function(y,c=1.345, max_iters=1000, tol_err=1e-5){
   return (mu_n)
 }
 
-#' % Mlocscale computes Huber's M-estimates of location and scale.
-#' %
-#' %   INPUTS:
-#' %           y: real valued data vector of size N x 1
-#' %           c: tuning constant c>=0
-#' %
-#' %   OUTPUT:
-#' %           mu_hat: Huber's M-estimate of location
-#' %           sigma_hat: Huber's M-estimate of scale
+#'   Mlocscale computes Huber's M-estimates of location and scale.
+#'
+#'
+#'@param             y: real valued data vector of size N x 1
+#'@param             c: tuning constant c>=0
+#'
+#'
+#'@return             mu_hat: Huber's M-estimate of location
+#'@return             sigma_hat: Huber's M-estimate of scale
 #' @export
 Mlocscale <- function(y, c=NULL){
   # approx 95 efficiency for Gaussian errors
@@ -61,18 +61,18 @@ Mlocscale <- function(y, c=NULL){
   return (hubreg(y, rep(1, length(y)), c, madn(y), median(y)))
 }
 
-#'% Mloc_TUK computes Tukey's M-estimate of
-#' % location, i.e.,
-#' %
-#' % mu_hat = arg min_mu SUM_i rho_TUK(y_i - mu)
-#' %
-#' %
-#' %   INPUTS:
-#' %           y: real valued data vector of size N x 1
-#' %           c: tuning constant c>=0
-#' %
-#' %   OUTPUT:
-#' %           mu_hat: Tukey's M-estimate of location
+#'  Mloc_TUK computes Tukey's M-estimate of
+#'   location, i.e.,
+#'
+#'   mu_hat = arg min_mu SUM_i rho_TUK(y_i - mu)
+#'
+#'
+#'
+#'@param             y: real valued data vector of size N x 1
+#'@param             c: tuning constant c>=0
+#'
+#'
+#'@return             mu_hat: Tukey's M-estimate of location
 #'   @export
 MlocTUK <- function(y, c=4.685, max_iters=1000, tol_err=1e-5){
   # previously computed scale estimate
@@ -92,16 +92,16 @@ MlocTUK <- function(y, c=4.685, max_iters=1000, tol_err=1e-5){
   return (mu_n)
 }
 
-#' % Mscale_HUB computes Huber's M-estimate of
-#' % scale.
-#' %
-#' %
-#' %   INPUTS:
-#' %           y: real valued data vector of size N x 1
-#' %           c: tuning constant c>=0
-#' %
-#' %   OUTPUT:
-#' %           sigma_hat: Huber's M-estimate of scale
+#'   Mscale_HUB computes Huber's M-estimate of
+#'   scale.
+#'
+#'
+#'
+#'@param             y: real valued data vector of size N x 1
+#'@param             c: tuning constant c>=0
+#'
+#'
+#'@return             sigma_hat: Huber's M-estimate of scale
 #' @export
 MscaleHUB <- function(y, c=1.345, max_iters=1000, tol_err=1e-5){
   # initial scale estimate
@@ -130,16 +130,16 @@ MscaleHUB <- function(y, c=1.345, max_iters=1000, tol_err=1e-5){
 }
 
 
-#' % Mscale_TUK computes Tukey's M-estimate of
-#' % scale.
-#' %
-#' %
-#' %   INPUTS:
-#' %           y: real valued data vector of size N x 1
-#' %           c: tuning constant c>=0
-#' %
-#' %   OUTPUT:
-#' %           sigma_hat: Tukey's M-estimate of scale
+#'   Mscale_TUK computes Tukey's M-estimate of
+#'   scale.
+#'
+#'
+#'
+#'@param             y: real valued data vector of size N x 1
+#'@param             c: tuning constant c>=0
+#'
+#'
+#'@return             sigma_hat: Tukey's M-estimate of scale
 #' @export
 MscaleTUK <- function(y, c=4.685, max_iters=1000, tol_err=1e-5){
   # initial scale estimate

@@ -2,17 +2,20 @@
 % Please edit documentation in R/Auxiliary.R
 \name{madn}
 \alias{madn}
-\title{madn computes the normalized median absolute deviation estimate of
-scale, i.e.,}
+\title{normalized median absolute deviation}
 \usage{
 madn(y)
 }
+\arguments{
+\item{y:}{data vector of size N x 1}
+}
+\value{
+sig: normalized median absolute deviations scale estimate
+}
 \description{
-mu_hat = arg min_mu SUM_i rho_TUK(y_i - mu)
+madn computes the normalized median absolute deviation estimate of
+scale, i.e.,
 }
 \details{
-INPUTS:
-          y: data vector of size N x 1
-  OUTPUT:
-          sig: normalized median absolute deviations scale estimate
+mu_hat = arg min_mu SUM_i rho_TUK(y_i - mu)
 }
