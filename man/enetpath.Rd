@@ -2,7 +2,8 @@
 % Please edit documentation in R/Regression.R
 \name{enetpath}
 \alias{enetpath}
-\title{[B, lamgrid, BIC, MSE] = enetpath(y, X,...)
+\title{enetpath
+ [B, lamgrid, BIC, MSE] = enetpath(y, X,...)
  enethpath computes the elastic net (EN) regularization path (over grid
 of penalty parameter values). Uses pathwise CCD algorithm.}
 \usage{

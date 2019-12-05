@@ -1,3 +1,5 @@
+# elemfits ----
+
 #'   [beta, w] = elemfits(x,y)
 #'   elemfits compute the Nx(N-1)/2 elemental fits, i.e., intercepts b_{0,ij}
 #'   and slopes b_{1,ij}, that define a line y = b_0+b_1 x that passes through
@@ -25,7 +27,7 @@ elemfits <- function(y, x){
 }
 
 
-
+# enet ----
 
 #'   enet computes the elastic net estimator using the cyclic co-ordinate
 #'   descent (CCD) algorithm.
@@ -50,7 +52,7 @@ enet <- function(y, X, beta, lambda, alpha=1, printitn=0, itermax = 1000){
   p <- ncol(X)
 
   betaold <- beta
-  normb0 <- norm(matrix(beta), type = "2")
+  normb0 <- norm(beta, type = "2")
   r <- y - X %*% beta
 
   lam1 <- alpha * lambda
@@ -68,7 +70,7 @@ enet <- function(y, X, beta, lambda, alpha=1, printitn=0, itermax = 1000){
       r <- r + X[,jj]*(betaold[jj]-beta[jj])
     }
 
-    normb <- norm(matrix(beta), type = "2")
+    normb <- norm(beta, type = "2")
 
     crit <- sqrt(normb0^2 + normb^2 - 2 * Re(t(betaold) %*% beta))/normb
 
@@ -85,8 +87,9 @@ enet <- function(y, X, beta, lambda, alpha=1, printitn=0, itermax = 1000){
   return (list(beta, iter))
 }
 
+# enetpath ----
 
-
+#' enetpath
 #'  [B, lamgrid, BIC, MSE] = enetpath(y, X,...)
 #'  enethpath computes the elastic net (EN) regularization path (over grid
 #' of penalty parameter values). Uses pathwise CCD algorithm.
@@ -167,6 +170,7 @@ enetpath <- function(y, X, alpha=1,  L=100, eps=1e-4, intcpt=TRUE, printitn=0){
 }
 
 
+# hublasso ----
 
 #'   hublasso computes the M-Lasso estimate for a given penalty parameter
 #'   using Huber's loss function
@@ -211,13 +215,13 @@ hublasso <- function(y, X, c = NULL, lambda, b0,  sig0, reltol = 1e-5, printitn 
 
   con <- sqrt(n * alpha)
   betaold <- b0
-  normb0 <- norm(matrix(b0), type = "2")
+  normb0 <- norm(b0, type = "2")
 
   for(iter in 1:iter_max){
     r <- y - X %*% b0
     psires <- psihub(r/sig0, c) * sig0
     # scale update
-    sig1 <- norm(matrix(psires), type = "2") / con
+    sig1 <- norm(psires, type = "2") / con
 
     crit2 <- abs(sig0 - sig1)
     for(jj in 1:p){
@@ -227,7 +231,7 @@ hublasso <- function(y, X, c = NULL, lambda, b0,  sig0, reltol = 1e-5, printitn 
       r <- r + X[,jj] * (betaold[jj] - b0[jj])
     }
 
-    normb <- norm(matrix(b0), type = "2")
+    normb <- norm(b0, type = "2")
 
     crit <- sqrt(normb0^2 + normb^2 - 2*Re(betaold %*% b0)) / normb0
 
@@ -257,13 +261,13 @@ hublasso <- function(y, X, c = NULL, lambda, b0,  sig0, reltol = 1e-5, printitn 
     # FP equation equal to zero
     fpeq <- -X * psires + lambda * s
     sprintf('lam = %.4f it = %d norm(FPeq1)= %.12f abs(FPeq2)=%.12f\n',
-            lambda,iter, norm(fpeq),sig1-norm(psires)/con)
+            lambda,iter, norm(fpeq, type = "2"),sig1-norm(psires, type = "2")/con)
   }
 
   return (list(b0, sig0, psires))
 }
 
-
+# hublassopath ----
 
 #'   hublassopath computes the M-Lasso regularization path (over grid
 #'                                                            of penalty parameter values) using Huber's loss function
@@ -353,6 +357,7 @@ hublassopath <- function(y, X, c = NULL, L = 120, eps =10^-3, intcpt = T, reltol
   return( list(B, B0, stats))
 }
 
+# hubreg ----
 
 #'   hubreg: regression and scale using Huber's criterion
 #'
@@ -402,7 +407,7 @@ hubreg <- function(y, X, c = NULL, sig0 = NULL, b0 = NULL, printitn = 0, iter_ma
   if(is.null(b0)) b0 <- ginv(X) %*% y
 
   # use unbiased residual sum of squares as initial estimate of scale
-  if(is.null(sig0)){sig0 <- norm(matrix(y - X %*% b0), type = "2") /
+  if(is.null(sig0)){sig0 <- norm(y - X %*% b0, type = "2") /
     sqrt(n - p)}
 
   csq <- c^2
@@ -426,7 +431,7 @@ hubreg <- function(y, X, c = NULL, sig0 = NULL, b0 = NULL, printitn = 0, iter_ma
     psires <- psihub(r / sig0, c) * sig0
 
     # Step 2: Update the scale
-    sig1 <- norm(matrix(psires), type ="2") / con
+    sig1 <- norm(psires, type ="2") / con
 
     # Step 3: Update the pseudo-residual
     psires <- psihub(r / sig1, c) * sig1
@@ -438,7 +443,7 @@ hubreg <- function(y, X, c = NULL, sig0 = NULL, b0 = NULL, printitn = 0, iter_ma
     b1 <- b0 + update
 
     # Step 6 check convergence
-    crit2 <- norm(matrix(update), type = "2") / norm(matrix(b0))
+    crit2 <- norm(update, type = "2") / norm(b0, type = "2")
     if(printitn > 0 & iter %% printitn) sprintf('hubreg: crit(%4d) = %.9f\n',iter,crit2)
 
     if(is.na(crit2) | errortol) break
@@ -452,4 +457,242 @@ hubreg <- function(y, X, c = NULL, sig0 = NULL, b0 = NULL, printitn = 0, iter_ma
   return( list(b1, sig1, iter))
 }
 
+# ladlasso ----
 
+#' ladlasso
+#'
+#' ladlasso computes the LAD-Lasso regression estimates for given complex-
+#' or real-valued data.  If number of predictors, p, is larger than one,
+#' then IRWLS algorithm is used, otherwise a weighted median algorithm
+#' (N > 200) or elemental fits (N<200).
+#'
+#' @param y numeric response N x 1 vector (real/complex)
+#' @param X  numeric feature  N x p matrix (real/complex)
+#' @param lambda numeric, non-negative penalty parameter
+#' @param intcpt numeric optional initial start of the regression vector for
+#'        IRWLS algorithm. If not given, we use LSE (when p>1).
+#' @param b0 numeric optional initial start of the regression vector for
+#'           IRWLS algorithm. If not given, we use LSE (when p>1).
+#' @param reltol
+#' Convergence threshold for IRWLS. Terminate when successive
+#'           estimates differ in L2 norm by a rel. amount less than reltol.
+#' @param printitn print iteration number (default = 0, no printing)
+#' @param iter_max number of iterations \cr
+#' default = 2000
+#'
+#' @return b1 numeric, the regression coefficient vector
+#' @return iter number of iterations
+#' @export
+#'
+#' @examples
+ladlasso <- function(y, X, lambda, intcpt = T, b0 = NULL, reltol = 1e-8, printitn = 0, iter_max = 2000){
+  N <- nrow(X)
+  p <- ncol(X)
+
+  if(intcpt) X <- cbind(matrix(1, N, 1), X)
+
+  if(is.null(b0)) b0 <- ginv(X) %*% y
+
+  iter <- NULL
+  if(printitn > 0) sprintf('Computing the solution for lambda = %.3f\n',lambda)
+
+  # The case of only one predictor
+  if(p == 1 & !intcpt)
+    b1 <- wmed( rbind(y / X, 0), rbind(abs(X), lambda))
+  else if(p == 1 & !is.complex(y) & N < 200 & intcpt){
+    if(lambda == 0){
+      b <- elemfits(X[,2], y) # b is a matrix
+      b <- b[[1]]
+    }else{
+      b <- elemfits(c(X[,2], 0), c(y, lambda))
+      b <- b[[1]]
+    }
+
+    res <- colSums(abs(repmat(y, ncol(b)) - X %*% b))
+    indx <- which.min(res)
+    b1 <- b[,indx]
+  }
+  else{
+    # use IRWLS always when p > 1
+    if(printitn > 0) print('Starting the IRWLS algorithm..\n')
+    if(lambda > 0){
+      y <- c(y, rep(0, p))
+      if(intcpt) X <- rbind(X, cbind(rep(0, p), diag(lambda, p, p))) else X <- rbind(X, diag(lambda, p, p))
+
+      for(iter in 1:iter_max){
+        resid <- abs(y - X %*% b0)
+        resid[resid < 1e-6] <- 1e-6
+        Xstar <- X / resid
+        b1 <- ginv(t(Xstar) %*% X) * (t(Xstart) %*% y)
+
+        crit <- norm(b1-b0, type = "2") / norm(b0, type = "2")
+        if(printitn > 0 & iter %% printitn) sprintf('ladlasso: crit(%4d) = %.9f\n',iter,crit)
+        if(iter > 10 & crit < reltol) break
+        b0 <- b1
+      }
+    }
+  }
+
+  return( list(b1, iter))
+}
+
+# ladlassopath ----
+
+#' ladlassopath
+#'
+#' ladlassopath computes the LAD-Lasso regularization path (over grid
+#'                                                           of penalty parameter values). Uses IRWLS algorithm.
+#'
+#' @param       y : Numeric data vector of size N x 1 (output, respones)
+#' @param     X : Numeric data matrix of size N x p. Each row represents one
+#'          observation, and each column represents one predictor (feature).
+#' @param intcpt: Logical (true/false) flag to indicate if intercept is in the
+#'          regression model
+#' @param eps: Positive scalar, the ratio of the smallest to the
+#'          largest Lambda value in the grid. Default is eps = 10^-3.
+#' @param     L : Positive integer, the number of lambda values EN/Lasso uses.
+#'          Default is L=120.
+#' @param reltol : Convergence threshold for IRWLS. Terminate when successive
+#'          estimates differ in L2 norm by a rel. amount less than reltol.
+#' @param printitn: print iteration number (default = 0, no printing)
+#'
+#' @return   B    : Fitted LAD-Lasso regression coefficients, a p-by-(L+1) matrix,
+#'         where p is the number of predictors (columns) in X, and L is
+#'         the  number of Lambda values. If intercept is in the model, then
+#'         B is (p+1)-by-(L+1) matrix, with first element the intercept.
+#' @return stats  : structure with following fields:
+#'            Lambda = lambda parameters in ascending order
+#'            MeAD = Mean Absolute Deviation (MeAD) of the residuals
+#'            gBIC = generalized Bayesian information criterion (gBIC) value
+#'                  for each lambda parameter on the grid.
+#' @export
+ladlassopath <- function(y, X, L = 120, eps = 1e-3, intcpt = T, reltol = 1e-6, printitn = 0){
+  n = nrow(X)
+  p = ncol(X)
+
+  if(intcpt){
+    p <- p + 1
+    if(is.complex(y)) medy <- spatmed(y) else medy <- median(y) # spatmed is from 03_covariance
+    yc <- y - medy
+    lam0 <- norm(t(X) %*% sign(yc), type = "I")
+    } else lam0 <- norm(t(X) %*% sign(y), type = "I")
+
+  lamgrid <- eps^(0:L / L) * lam0
+  B <- diag(0, p, L + 1)
+
+  if(intcpt) binit <- c(medy, numeric(p-1)) else binit <- numeric(p)
+
+  for(jj in 1:(L+1)){
+    B[,jj] <- ladlasso(y,X, lamgrid[jj], intcpt, binit, reltol, printitn)
+    binit <- B[,jj]
+  }
+
+  if(intcpt){
+    B[rbind(rep(F, L+1), abs(B[2:nrow(B),]) < 1e-7)] <- 0
+    DF <- colSums(abs(B[2:nrow(B),]) != 0)
+    MeAD <- sqrt(pi / 2) * colMeans(abs(repmat(y, L+1) - cbind(rep(1, n), X) %*% B))
+    const <- sqrt(n / (n - DF - 1))
+  } else {
+    B[abs(B) < 1e-7] <- 0
+    DF <- colSums(abs(B) != 0)
+    MeAD <- sqrt(pi / 2) * colMeans(abs(repmat(y, L+1) - X %*% B))
+    const <- sqrt(n / (n - DF - 1))
+  }
+
+  gBIC <- 2 * n * log(MeAD) + DF * log(n)
+
+  stats <- list(MeAD * const, gBIC, lamgrid, names = c('MeAD', 'gBIC', 'Lambda'))
+
+  return(list(B, stats))
+}
+
+# ladreg ----
+
+ladreg <- function(){}
+
+# Mreg ----
+
+Mreg <- function(){}
+
+# rankflasso ----
+
+rankflasso <- function(){}
+
+# rankflassopath ----
+
+rankflassopath <- function(){}
+
+# ranklasso ----
+
+ranklasso <- function(){}
+
+# rankflassopath ----
+
+ranklassopath <- function(){}
+
+# rladreg ----
+
+rladreg <- function(){}
+
+# wmed ----
+
+#' weighted median
+#'
+#' wmed computes the weighted median for data vector y and weights w, i.e.
+#' it solves the optimization problem:
+#'
+#' beta = arg min_b  SUM_i | y_i - b | * w_i
+#'
+#'
+#'@param        y : (numeric) data given (real or complex)
+#'@param       w : (nubmer) positive real-valued weights. Inputs need to be of
+#'           same length
+#'@param       verbose: (logical) true of false (default). Set as true if you wish
+#'       to see convergence as iterations evolve
+#'
+#'@param tol: threshold for iteration in complex case \cr default = 1e-7
+#'@param iter_max: number of iterations in complex case \cr default = 2000
+#'
+#'@return beta: (numeric) weighted median
+#'@return converged: (logical) flag of convergence (in the complex-valued
+#'                                                         data case)
+#'@return       iter: (numeric) the number of iterations (complex-valued case)
+#'@export
+wmed <- function(y, w, verbose = F, tol = 1e-7, iter_max = 2000){
+  N <- length(y)
+
+  # complex-valued case
+  if(is.complex(y)){
+    beta0 <- median(Re(y)) + 1i * median(Im(y)) # initial guess
+    abs0 <- abs(beta0)
+    for(iter in 1:iter_max){
+      wy <- abs(y - beta0)
+      wy[wy <= 1e-6] <- 1e-6
+      update <- colSums(w * (y - beta0)/(abs(y - beta0))) / colSums(w / wy)
+      beta <- beta0 + update
+      delta <- abs(update) / abs0
+      if(verbose & iter %% 10 == 0) sprintf('At iter = %3d, delta=%.8f\n',iter,delta)
+      if(delta <= tol) break
+
+      beta0 <- beta
+      abs0 <- abs(beta)
+      if(iter == iter_max) converged <- F else converged <- T
+    }# ends for loop
+  } else{
+    # real- value case
+    tmp <- sort(y, index.return = T)
+    y <- tmp[[1]]
+    indx <- tmp[[2]]
+
+    w <- w[indx]
+    wcum <- cumsum(w)
+    i <- which(wcum < 0.5 * sum(w))
+    i <- i[length(i)]
+    beta <- y[i+1] # see equation (2.21) of the book
+
+    iter <- 0
+    converged <- NULL
+  } # end real value case
+
+  return( list(beta, iter, converged))
+}

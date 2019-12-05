@@ -18,6 +18,7 @@ madn <- function(y)
     return (const*median(abs(y-median(y))))
 }
 
+repmat <- function(v, s) matrix(v, nrow=length(v), ncol=s)
 
 #'Huber's score function
 #'
