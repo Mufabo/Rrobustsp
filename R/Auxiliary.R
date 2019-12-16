@@ -18,7 +18,19 @@ madn <- function(y)
     return (const*median(abs(y-median(y))))
 }
 
+#' repmat
+#'  matlab like repmat, vector v is replicate s times columnwise into a matrix
+#'@export
 repmat <- function(v, s) matrix(v, nrow=length(v), ncol=s)
+
+#' mat_sign
+#'
+#' sign that also works for complex numbers
+#' @export
+mat_sign <- function(x){
+    if(is.complex(x)) res <- x / abs(x) else res <- sign(x)
+    return(res)
+}
 
 #'Huber's score function
 #'
@@ -38,6 +50,13 @@ psihub <- function(x,c){
 #'@export
 psituk <- function(x, c){
     return (x*((1-(abs(x)/c)^2)^2 )*(abs(x)<=c))
+}
+
+#'@export
+scaledata <- function(x){
+    nom <- sweep(x, 2, apply(x, 2, min)) # subtract col_mins from each respective column
+    denom <- apply(x, 2, max) - apply(x, 2, min)
+    return(3 * sweep(nom, 2, denom, FUN = '/'))
 }
 
 #'@export

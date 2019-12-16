@@ -6,15 +6,16 @@
 #'   the data points (x_i,y_i) and (x_j,y_j), i<j, where i, j in {1, ..., N}.
 #'   and the respective weights | x_i - x_j |
 #'
-#'    @param   y : (numeric) N x 1 vector of real-valued outputs (response vector)
-#'    @param   x : (numeric) N x 1 vector of inputs (feature vector)
+#'@param   y : (numeric) N  vector of real-valued outputs (response vector)
+#'@param   x : (numeric) N  vector of inputs (feature vector)
 #'
-#'    @return    beta: (numeric) N*(N-1)/2 matrix of elemental fits
-#'    @return   w: (numeric) N*(N-1)/2 matrix of weights
-#' @export
+#'@return    beta: (numeric) N*(N-1)/2 matrix of elemental fits
+#'@return   w: (numeric) N*(N-1)/2 matrix of weights
+#'@export
 elemfits <- function(y, x){
   N <- length(x)
   B <- matrix(1:N, N, N)
+  A <- t(B)
   a <- A[A<B]
   b <- B[A<B]
   w <- x[a] - x[b]
@@ -29,23 +30,25 @@ elemfits <- function(y, x){
 
 # enet ----
 
+#'   enet
+#'
 #'   enet computes the elastic net estimator using the cyclic co-ordinate
 #'   descent (CCD) algorithm.
 #'
-#'     @param       y : (numeric) data vector of size N x 1 (output, respones)
+#'@param       y : (numeric) data vector of size N x 1 (output, respones)
 #'           if the intercept is in the model, then y needs to be centered.
-#'     @param    X : (numeric) data matrix of size N x p (input, features)
+#'@param    X : (numeric) data matrix of size N x p (input, features)
 #'             Columns are assumed to be standardized (i.e., norm(X(:,j))=1)
 #'             as well as centered (if intercept is in the model).
-#'   @param   beta : (numeric) regression vector for initial start for CCD algorithm
-#'   @param lambda : (numeric) a postive penalty parameter value
-#'   @param alpha  : (numeric) elastic net tuning parameter in the range [0,1]. If
+#'@param   beta : (numeric) regression vector for initial start for CCD algorithm
+#'@param lambda : (numeric) a postive penalty parameter value
+#'@param alpha  : (numeric) elastic net tuning parameter in the range [0,1]. If
 #'             not given then use alpha = 1 (Lasso)
-#'  @param printitn: print iteration number (default = 0, no printing)
+#'@param printitn: print iteration number (default = 0, no printing)
 #'
-#'   @return     beta    : (numberic) the regression coefficient vector
-#'  @return iter  : (numeric) # of iterations
-#' @export
+#'@return     beta    : (numeric) the regression coefficient vector
+#'@return iter  : (numeric) # of iterations
+#'@export
 enet <- function(y, X, beta, lambda, alpha=1, printitn=0, itermax = 1000){
   # check for valid arguments
 
@@ -78,13 +81,12 @@ enet <- function(y, X, beta, lambda, alpha=1, printitn=0, itermax = 1000){
       sprintf('enet: %4d  crit = %.8f\n',iter,crit)
     }
 
-    if(is.nan(crit) | crit < 1e-4) {      break }
+    if(is.nan(crit) | crit < 1e-4) {return (list(beta, iter)) }
 
     betaold <- beta
     normb0 <- normb
   }
 
-  return (list(beta, iter))
 }
 
 # enetpath ----
@@ -140,7 +142,7 @@ enetpath <- function(y, X, alpha=1,  L=100, eps=1e-4, intcpt=TRUE, printitn=0){
   # grid of penalty values
   lamgrid <- eps^((0:L)/L) * lam0
 
-  B <- matrix(0,p,L+1)
+  B <- matrix(0, p, L+1)
 
   for(jj in 1:L){
     B[,jj+1] <- enet(y, X, B[,jj], lamgrid[jj+1], alpha, printitn)[[1]]
@@ -150,7 +152,7 @@ enetpath <- function(y, X, alpha=1,  L=100, eps=1e-4, intcpt=TRUE, printitn=0){
 
   DF = colSums(abs(B) != 0)
 
-  if(n>p){
+  if(n > p){
       MSE <- colSums(abs(y - X %*% B)^2) * (1 / (n - DF - 1))
       BIC <- n * log(MSE) + DF * log(n)
   } else
@@ -164,7 +166,9 @@ enetpath <- function(y, X, alpha=1,  L=100, eps=1e-4, intcpt=TRUE, printitn=0){
 
   if(intcpt) B <- rbind(meany - meanX %*% B, B)
 
-  stats <- matrix(c(MSE, BIC, lamgrid), nrow = L+1, ncol = 3, dimnames = list(NULL ,c('MSE', 'BIC', 'Lambda')))
+  stats <- list(MSE, BIC, lamgrid)
+  names(stats) <- c('MSE', 'BIC', 'Lambda')
+
 
   return (list(B, stats))
 }
@@ -480,8 +484,8 @@ hubreg <- function(y, X, c = NULL, sig0 = NULL, b0 = NULL, printitn = 0, iter_ma
 #' @param iter_max number of iterations \cr
 #' default = 2000
 #'
-#' @return b1 numeric, the regression coefficient vector
-#' @return iter number of iterations
+#' @return b1 numeric, the regression coefficient vector of size N
+#' @return integr, iter number of iterations
 #' @export
 #'
 #' @examples
@@ -497,43 +501,41 @@ ladlasso <- function(y, X, lambda, intcpt = T, b0 = NULL, reltol = 1e-8, printit
   if(printitn > 0) sprintf('Computing the solution for lambda = %.3f\n',lambda)
 
   # The case of only one predictor
-  if(p == 1 & !intcpt)
-    b1 <- wmed( rbind(y / X, 0), rbind(abs(X), lambda))
-  else if(p == 1 & !is.complex(y) & N < 200 & intcpt){
-    if(lambda == 0){
-      b <- elemfits(X[,2], y) # b is a matrix
-      b <- b[[1]]
-    }else{
-      b <- elemfits(c(X[,2], 0), c(y, lambda))
-      b <- b[[1]]
-    }
-
-    res <- colSums(abs(repmat(y, ncol(b)) - X %*% b))
-    indx <- which.min(res)
-    b1 <- b[,indx]
+  if(p == 1){
+    if(!intcpt) b1 <- wmed( rbind(y / X, 0), rbind(abs(X), lambda))
+    if(!is.complex(y) & N < 200 & intcpt){
+        if(lambda == 0){
+          b <- elemfits(X[,2], y) # b is a matrix
+          b <- b[[1]]
+        }else{
+          b <- elemfits(c(X[,2], 0), c(y, lambda))
+          b <- b[[1]]
+        }}
+      res <- colSums(abs(repmat(y, ncol(b)) - X %*% b))
+      indx <- which.min(res)
+      b1 <- b[,indx]
   }
-  else{
+  else {
     # use IRWLS always when p > 1
     if(printitn > 0) print('Starting the IRWLS algorithm..\n')
     if(lambda > 0){
       y <- c(y, rep(0, p))
       if(intcpt) X <- rbind(X, cbind(rep(0, p), diag(lambda, p, p))) else X <- rbind(X, diag(lambda, p, p))
-
-      for(iter in 1:iter_max){
-        resid <- abs(y - X %*% b0)
-        resid[resid < 1e-6] <- 1e-6
-        Xstar <- X / resid
-        b1 <- ginv(t(Xstar) %*% X) * (t(Xstart) %*% y)
-
-        crit <- norm(b1-b0, type = "2") / norm(b0, type = "2")
-        if(printitn > 0 & iter %% printitn) sprintf('ladlasso: crit(%4d) = %.9f\n',iter,crit)
-        if(iter > 10 & crit < reltol) break
-        b0 <- b1
-      }
     }
-  }
 
-  return( list(b1, iter))
+    for(iter in 1:iter_max){
+      resid <- abs(y - X %*% b0)
+      resid[resid < 1e-6] <- 1e-6
+      Xstar <- sweep(X, 1, resid, FUN = "/")
+      b1 <- ginv(t(Xstar) %*% X) %*% (t(Xstar) %*% y)
+
+      crit <- norm(b1-b0, type = "2") / norm(b0, type = "2")
+      if(printitn > 0 & iter %% printitn) sprintf('ladlasso: crit(%4d) = %.9f\n',iter,crit)
+      if(iter > 10 & crit < reltol) break
+      b0 <- b1
+    }}
+
+  return( list(c(b1), iter))
 }
 
 # ladlassopath ----
@@ -608,31 +610,397 @@ ladlassopath <- function(y, X, L = 120, eps = 1e-3, intcpt = T, reltol = 1e-6, p
 
 # ladreg ----
 
-ladreg <- function(){}
+#' ladrag
+#'
+#' ladreg computes the LAD regression estimate
+#'
+#' @param          y: numeric response N x 1 vector (real/complex)
+#' @param        X: numeric feature  N x p matrix (real/complex)
+#' @param   intcpt: (logical) flag to indicate if intercept is in the model
+#' @param       b0: numeric optional initial start of the regression vector for
+#' IRWLS algorithm. If not given, we use LSE (when p>1).
+#' @param printitn: print iteration number (default = 0, no printing) and
+#' other details
+#'
+#' @return        b1: (numberic) the regression coefficient vector
+#' @return     iter: (numeric) # of iterations (given when IRWLS algorithm is used)
+#'
+#' @examples
+#'
+#' @export
+ladreg <- function(y, X, intcpt = T, b0 = NULL, printitn = 0){
+  return(ladlasso(y, X, 0, intcpt, b0, printitn))
+
+}
 
 # Mreg ----
 
-Mreg <- function(){}
+#' Mreg computes the M-estimates of regression using an auxiliary scale
+#' estimate. It uses the iterative reweighted least squares (IRWLS) algorithm
+#'
+#' @param        y : (numeric) data vector of size N x 1 (output, response vector)
+#' @param      X : (numeric) data matrix of size N x p (input, feature matrix)
+#'           If the model has intercept, then first column of X should be a
+#'           vector of ones.
+#' @param lossfun : (string) either 'huber' or 'tukey' to identify the desired
+#'           loss function. Default is 'huber'
+#' @param     b0 : (numeric) Optional robust initial start (regression vector) of
+#'           iterations. If not given, we use the LAD regression estimate
+#' @param verbose: (logical) true of false (default). Set as true if you wish
+#'           to see convergence as iterations evolve.
+#'
+#' @return b1 : regression parameters
+#' @return sig: scale
+#'
+#' @examples
+#' @export
+Mreg <- function(y, X, lossfun = 'huber', b0 = NULL, verbose = F){
+
+  if(is.null(b0)) b0 <- ladreg(y, X, F)
+
+  # Compute the auxiliary scale estimate as
+  if(is.complex(y)) const <- 1.20112 else const <- 1.4815
+
+  resid <- abs(y - X %*% b0) # resid is a matrix
+
+  sig <- const * median(resid[resid !=  0]) # auxiliary scale estimate
+
+  if(lossfun == 'tukey'){
+    if(is.complex(y)) c <- 3 else c <- 3.4437
+    wfun <- function(x) wtuk(x, c)
+  }
+  else if(lossfun == 'huber'){
+    if(is.complex(y)) c <- 1.214 else c <- 1.345
+    wfun <- function(x) whub(x, c)
+  } else {stop('lossfun must be either huber or tukey as a string')}
+
+  ITERMAX <- 1000
+  TOL <- 1.0e-5
+
+  if(verbose) sprintf('Mreg: iterations starting, using %s loss function \n',lossfun)
+
+  for(iter in 1:ITERMAX){
+
+    resid[resid < 1e-6] <- 1e-6
+    w <- wfun(resid / sig)
+    Xstar <- X * w
+    b1 <- (t(Xstar) %*% y) / (t(Xstar) %*% X)
+
+    crit <- norm(b1 - b0, type = "2") / norm(b0, type = "2")
+    if(verbose) sprintf('Mreg: crit(%4d) = %.9f\n',iter,crit)
+    if(crit < TOL) break
+
+    b0 <- b1
+
+    resid <- abs(y - X %*% b0)
+  }
+
+  return(list(b1, sig))
+  }
 
 # rankflasso ----
 
-rankflasso <- function(){}
+#' Computes the rank fused-Lasso regression estimates for given fused
+#' penalty value lambda_2 and for a range of lambda_1 values
+#'
+#' @param    y       : numeric response N x 1 vector (real/complex)
+#' @param  X       : numeric feature  N x p matrix (real/complex)
+#' @param  lambda1 : positive penalty parameter for the Lasso penalty term
+#' @param  lambda2 : positive penalty parameter for the fused Lasso penalty term
+#' @param  b0      : numeric optional initial start (regression vector) of
+#'           iterations. If not given, we use LSE (when p>1).
+#' @param printitn : print iteration number (default = 0, no printing)
+#'
+#' @return    b      : numeric regression coefficient vector
+#' @return  iter   : positive integer, the number of iterations of IRWLS algorithm
+#'
+#' @examples
+#'
+#' @export
+rankflasso <- function(y, X, lambda1, lambda2, b0 = NULL, printitn = 0){
+  n <- nrow(X)
+  p <- ncol(X)
+
+  intcpt <- F
+
+  if(is.null(b0)) {
+    b0 <- y / cbind(rep(1, n), X)
+    b0 <- bo[2:length(b0)]
+  }
+
+  B <- repmat(1:n, n)
+
+  A <- t(B)
+
+  a <- A[A < B]
+  b <- B[A < B]
+
+  D <- diag(-1, p-1, p-1)
+  D[seq(p, (p-1)^2, p)] <- 1
+
+  onev <- c(rep(0, p-2), 1)
+  D <- cbind(D, onev)
+
+  ytilde <- c(y[a] - y[b], rep(0, p-1))
+
+  Xtilde <- rbind( X[a,] - X[b,], lambda2 * D)
+
+  if(printitn > 0) sprintf('rankflasso: starting iterations\n')
+
+  r <- ladlasso(ytilde, Xtilde, lambda1, intcpt, b0, printitn)
+  r[[1]][r[[1]] < 1e-7] <- 0
+  return(r)
+}
 
 # rankflassopath ----
 
-rankflassopath <- function(){}
+#' rankflassopath()
+#'
+#' Computes the rank fused-Lasso regression estimates for given fused
+#' penalty value lambda_2 and for a range of lambda_1 values
+#'
+#' @param    y       : numeric response N x 1 vector (real/complex)
+#' @param    X       : numeric feature  N x p matrix (real/complex)
+#' @param   lambda2 : positive penalty parameter for the fused Lasso penalty term
+#' @param   L       : number of grid points for lambda1 (Lasso penalty)
+#' @param   eps     : Positive scalar, the ratio of the smallest to the
+#'             largest Lambda value in the grid. Default is eps = 10^-4.
+#' @param printitn : print iteration number (default = F, no printing)
+#'
+#'
+#'@return         B: Fitted rank fused-Lasso regression coefficients, a p-by-(L+1) matrix,
+#'           where p is the number of predictors (columns) in X, and L is
+#'           the  number of Lambda values.
+#'@return       B0: estimates values of intercepts
+#'@return       lamgrid: = lambda parameters
+#'@examples
+#'
+#'@export
+rankflassopath <- function(y, X, lambda2, L = 120, eps = 1e-3, printitn = F){
+  n <- nrow(X)
+  p <- ncol(X)
+
+  intcpt <- F
+
+  B <- repmat(1:n, n)
+  A <- t(B)
+
+  a <- A[A < B]
+  b <- B[A < B]
+
+  D <- diag(-1, p-1, p-1)
+  D[seq(p, (p-1)^2, p)] <- 1
+
+  onev <- c(rep(0, p-2), 1)
+  D <- cbind(D, onev)
+
+  ytilde <- c(y[a] - y[b], rep(0, p-1))
+
+  Xtilde <- rbind( X[a,] - X[b,], lambda2 * D)
+
+  lam0 <- norm(t(Xtilde) %*% mat_sign(ytilde), type = "I")
+
+  lamgrid <- eps^(0:L / L) * lam0
+
+  B <- rep(0, L + 1)
+  B0 <- rep(0, L + 1)
+
+  b_init <- rep(0, p)
+
+  if(printitn) sprintf('rankflassopath: starting iterations\n')
+
+  for(jj in 1:(L+1)){
+    B[, jj] <- ladlasso(ytilde, Xtilde, lamgrid[jj], intcpt, b_init, printitn)[[1]]
+    b_init <- B[, jj]
+    if(printitn) print('.')
+  }
+
+  B[abs(B) < 1e-7] = 0
+
+  result <- list(B, B0, lamgrid)
+
+  names(result) <- c('B', 'B0', 'lamgrid')
+
+  return( result)
+}
 
 # ranklasso ----
 
-ranklasso <- function(){}
+#' ranklasso
+#'
+#' ranklasso computes the rank (LAD-)regression estimate
+#'
+#' @param        y  : numeric data vector of size N x 1 (output, respones)
+#' @param      X  : numeric data matrix of size N x p (input, features)
+#' @param  lambda : penalty parameter (>= 0)
+#' @param     b0  : numeric optional initial start (regression vector) of
+#'           iterations. If not given, we use LSE.
+#' @param printitn : bool, print iteration number (default = F, no printing) and
+#'            other details
+#'
+#' @result    b1     : numeric the regression coefficient vector
+#' @result  iter   : (numeric) # of iterations (given when IRWLS algorithm is used)
+#'
+#' @examples
+#'
+#' @export
+ranklasso <- function(y, X, lambda, b0 = NULL, printitn = F){
+  n <- nrow(X)
 
-# rankflassopath ----
+  intcpt <- F
 
-ranklassopath <- function(){}
+  if(is.null(b0)){
+    b0 <- y / cbind(rep(1, n), X)
+    b0 <- b0[2:length(b0)]
+  }
+
+  B <- repmat(1:n, n)
+
+  A <- t(B)
+
+  a <- A[A < B]
+  b <- B[A < B]
+
+  Xtilde <- X[a,] - X[b,]
+  ytilde <- y[a] - y[b]
+
+  return(ladlasso(ytilde, Xtilde, lambda, intcpt, b0, printitn))
+}
+
+# ranklassopath ----
+
+#' ranklassopath
+#'
+#' ranklassopath computes the rank LAD-Lasso regularization path (over grid
+#'                                                                  of penalty parameter values). Uses IRWLS algorithm.
+#'
+#' @param         y: Numeric data vector of size N (output, respones)
+#' @param       X: Numeric data matrix of size N x p. Each row represents one
+#'           observation, and each column represents one predictor (feature).
+#' @param       L: Positive integer, the number of lambda values on the grid to be
+#'           used. The default is L=120.
+#' @param     eps: Positive scalar, the ratio of the smallest to the
+#'           largest Lambda value in the grid. Default is eps = 10^-3.
+#' @param  reltol: Convergence threshold for IRWLS. Terminate when successive
+#'          estimates differ in L2 norm by a rel. amount less than reltol.
+#' @param printitn: print iteration number (default = F, no printing)
+#'
+#' @return          B: Fitted RLAD-Lasso regression coefficients, a p-by-(L+1) matrix,
+#'           where p is the number of predictors (columns) in X, and L is
+#'           the  number of Lambda values.
+#' @return      B0: estimates values of intercepts
+#' @return   stats: structure with following fields:
+#'             Lambda = lambda parameters in ascending order
+#'             GMeAD = Mean Absolute Deviation (MeAD) of the residuals
+#'             gBIC = generalized Bayesian information criterion (gBIC) value
+#'                  for each lambda parameter on the grid.
+#'
+#' @examples
+#' y <- 1:5
+#' X <- matrix(rnorm(15),5,3)
+#'
+#' tmp <- ranklassopath(y, X)
+#'
+#'
+#' tmp[[1]] # B
+#' tmp[[2]] # B0
+#' tmp[[3]]['GMeAD'] # stats fiedl GMeAD
+#'
+#'
+#' @export
+ranklassopath <- function(y, X, L = 120, eps = 1e-3, reltol = 1e-7, printitn = F){
+  n <- nrow(X)
+  p <- ncol(X)
+  intcpt <- F
+
+  B <- repmat(1:n, n)
+
+  A <- t(B)
+  a <- A[A < B]
+  b <- B[A < B]
+
+  Xtilde <- X[a,] - X[b,]
+  ytilde <- y[a] - y[b]
+
+  lam0 <- norm(t(Xtilde) %*% mat_sign(ytilde), type = "I")
+
+  lamgrid <- eps^((0:L)/L) * lam0
+
+  B <- diag(0, p, L + 1)
+  B0 <- numeric(L + 1)
+  b_init <- numeric(L + 1)
+
+  for(jj in 1:(L + 1)){
+    B[, jj] <- ladlasso(ytilde, Xtilde, lamgrid[jj], intcpt, b_init, reltol, printitn)
+    b_init <- B[, jj]
+    r <- y - X %*% b_init
+    if(is.complex(X)) B[, jj] <- spatmed((r[a] - r[b]) / 2) else B[, jj] <- median((r[a] - r[b]) / 2)
+
+  }
+
+  B[abs(B) < 1e-7] <- 0
+
+  DF <- colSums(abs(B) != 0)
+
+  # Compute the generalized BIC (gBIC) values
+  Rmat <- repmat(ytilde, L + 1) - Xtilde %*% B # matrix of residuals
+  N <- (n - 1) / 2
+  GMeAD <- (sqrt(pi) / 2) * colMeans(abs(Rmat)) # Gini's dispersion
+  GmeAD <- GMeAD * sqrt(n / (n - DF -1))
+
+  gBIC <- 2 * n * log(GMeAD) + DF * log(n)
+
+  Lambda <- lamgrid
+
+  stats <- list(DF, GMeAD, gBIC, Lambda)
+  names(stats) <- c('DF', 'GMeAD', 'gBIC', 'Lambda')
+
+  return(list(B, B0, stats))
+}
+
+
 
 # rladreg ----
 
-rladreg <- function(){}
+#' rladreg
+#'
+#'computes the LAD regression estimate
+#'
+#' @param        y: numeric response N x 1 vector (real/complex)
+#' @param        X: numeric feature  N x p matrix (real/complex)
+#' @param       b0: numeric optional initial start of the regression vector for
+#'                  IRWLS algorithm. If not given, we use LSE (when p>1).
+#' @param printitn: print iteration number (default = 0, no printing) and
+#'            other details
+#'
+#' @return          b1: numeric the regression coefficient vector
+#' @return        iter: (numeric) # of iterations (given when IRWLS algorithm is used)
+#'
+#'
+#' @examples
+#' @export
+rladreg <- function(y, X, b0 = NULL, printitn = F){
+  n <- nrow(X)
+  p <- ncol(X)
+
+  if(is.null(b0)){
+    b0 <- ginv(cbind(rep(1, n), X)) %*% y
+    b0 <- b0[2:length(b0)]
+  }
+
+  B <- repmat(1:n, n)
+  A <- t(B)
+  a <- A[A < B]
+  b <- B[A < B]
+  Xtilde <- X[a,] - X[b,]
+  ytilde <- y[a] - y[b]
+
+  if(p == 1){
+    b1 <- wmed(ytilde / Xtilde, abs(Xtilde))
+    iter <- NULL
+    return(list(b1, iter))
+  } else return(ladlasso(ytilde, Xtilde, 0, b0, printitn))
+}
 
 # wmed ----
 

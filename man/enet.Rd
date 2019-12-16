@@ -2,24 +2,33 @@
 % Please edit documentation in R/Regression.R
 \name{enet}
 \alias{enet}
-\title{enet computes the elastic net estimator using the cyclic co-ordinate
-  descent (CCD) algorithm.}
+\title{enet}
 \usage{
 enet(y, X, beta, lambda, alpha = 1, printitn = 0, itermax = 1000)
 }
-\description{
-@param       y : (numeric) data vector of size N x 1 (output, respones)
-          if the intercept is in the model, then y needs to be centered.
-    @param    X : (numeric) data matrix of size N x p (input, features)
-            Columns are assumed to be standardized (i.e., norm(X(:,j))=1)
-            as well as centered (if intercept is in the model).
-  @param   beta : (numeric) regression vector for initial start for CCD algorithm
-  @param lambda : (numeric) a postive penalty parameter value
-  @param alpha  : (numeric) elastic net tuning parameter in the range [0,1]. If
-            not given then use alpha = 1 (Lasso)
- @param printitn: print iteration number (default = 0, no printing)
+\arguments{
+\item{y}{: (numeric) data vector of size N x 1 (output, respones)
+if the intercept is in the model, then y needs to be centered.}
+
+\item{X}{: (numeric) data matrix of size N x p (input, features)
+Columns are assumed to be standardized (i.e., norm(X(:,j))=1)
+as well as centered (if intercept is in the model).}
+
+\item{beta}{: (numeric) regression vector for initial start for CCD algorithm}
+
+\item{lambda}{: (numeric) a postive penalty parameter value}
+
+\item{alpha}{: (numeric) elastic net tuning parameter in the range [0,1]. If
+not given then use alpha = 1 (Lasso)}
+
+\item{printitn:}{print iteration number (default = 0, no printing)}
 }
-\details{
-@return     beta    : (numberic) the regression coefficient vector
- @return iter  : (numeric) # of iterations
+\value{
+beta    : (numberic) the regression coefficient vector
+
+iter  : (numeric) # of iterations
+}
+\description{
+enet computes the elastic net estimator using the cyclic co-ordinate
+  descent (CCD) algorithm.
 }
