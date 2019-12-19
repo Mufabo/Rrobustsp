@@ -463,6 +463,16 @@ hubreg <- function(y, X, c = NULL, sig0 = NULL, b0 = NULL, printitn = 0, iter_ma
 
 # ladlasso ----
 
+library(Rcpp)
+
+cppFunction(depends='RcppArmadillo', code='
+            arma::mat fRcpp (arma::mat Xstar, arma::mat X, arma::mat y) {
+            arma::mat betahat ;
+            betahat = (Xstar.t() * X ).i() * (Xstar.t() * y) ;
+            return(betahat) ;
+            }
+            ')
+
 #' ladlasso
 #'
 #' ladlasso computes the LAD-Lasso regression estimates for given complex-
@@ -495,7 +505,7 @@ ladlasso <- function(y, X, lambda, intcpt = T, b0 = NULL, reltol = 1e-8, printit
 
   if(intcpt) X <- cbind(matrix(1, N, 1), X)
 
-  if(is.null(b0)) b0 <- ginv(X) %*% y
+  if(is.null(b0)) b0 <- qr.solve(X, y) # ginv(X) %*% y
 
   iter <- NULL
   if(printitn > 0) sprintf('Computing the solution for lambda = %.3f\n',lambda)
@@ -520,18 +530,21 @@ ladlasso <- function(y, X, lambda, intcpt = T, b0 = NULL, reltol = 1e-8, printit
     if(printitn > 0) print('Starting the IRWLS algorithm..\n')
     if(lambda > 0){
       y <- c(y, rep(0, p))
+      # slow
       if(intcpt) X <- rbind(X, cbind(rep(0, p), diag(lambda, p, p))) else X <- rbind(X, diag(lambda, p, p))
     }
+
 
     for(iter in 1:iter_max){
       resid <- abs(y - X %*% b0)
       resid[resid < 1e-6] <- 1e-6
-      Xstar <- sweep(X, 1, resid, FUN = "/")
-      b1 <- ginv(t(Xstar) %*% X) %*% (t(Xstar) %*% y)
+      Xstar <- sweep(X, 1, resid, FUN = "/") # slow
+      b1 <- fRcpp(Xstar, X, matrix(y))#qr.solve(Xstar %*% X, Xstar %*% y) #c(MASS::ginv(t(Xstar) %*% X) %*% (t(Xstar) %*% y))
 
       crit <- norm(b1-b0, type = "2") / norm(b0, type = "2")
+
       if(printitn > 0 & iter %% printitn) sprintf('ladlasso: crit(%4d) = %.9f\n',iter,crit)
-      if(iter > 10 & crit < reltol) break
+      if(crit < reltol && iter > 10) break
       b0 <- b1
     }}
 
@@ -703,12 +716,12 @@ Mreg <- function(y, X, lossfun = 'huber', b0 = NULL, verbose = F){
 #' Computes the rank fused-Lasso regression estimates for given fused
 #' penalty value lambda_2 and for a range of lambda_1 values
 #'
-#' @param    y       : numeric response N x 1 vector (real/complex)
+#' @param  y       : numeric response N x 1 vector (real/complex)
 #' @param  X       : numeric feature  N x p matrix (real/complex)
 #' @param  lambda1 : positive penalty parameter for the Lasso penalty term
 #' @param  lambda2 : positive penalty parameter for the fused Lasso penalty term
 #' @param  b0      : numeric optional initial start (regression vector) of
-#'           iterations. If not given, we use LSE (when p>1).
+#'                   iterations. If not given, we use LSE (when p>1).
 #' @param printitn : print iteration number (default = 0, no printing)
 #'
 #' @return    b      : numeric regression coefficient vector
@@ -724,8 +737,8 @@ rankflasso <- function(y, X, lambda1, lambda2, b0 = NULL, printitn = 0){
   intcpt <- F
 
   if(is.null(b0)) {
-    b0 <- y / cbind(rep(1, n), X)
-    b0 <- bo[2:length(b0)]
+    b0 <- qr.solve(cbind(rep(1, n), X), y)
+    b0 <- b0[2:length(b0)]
   }
 
   B <- repmat(1:n, n)
@@ -738,8 +751,7 @@ rankflasso <- function(y, X, lambda1, lambda2, b0 = NULL, printitn = 0){
   D <- diag(-1, p-1, p-1)
   D[seq(p, (p-1)^2, p)] <- 1
 
-  onev <- c(rep(0, p-2), 1)
-  D <- cbind(D, onev)
+  D <- cbind(D, c(rep(0, p-2), 1))
 
   ytilde <- c(y[a] - y[b], rep(0, p-1))
 
@@ -748,8 +760,10 @@ rankflasso <- function(y, X, lambda1, lambda2, b0 = NULL, printitn = 0){
   if(printitn > 0) sprintf('rankflasso: starting iterations\n')
 
   r <- ladlasso(ytilde, Xtilde, lambda1, intcpt, b0, printitn)
-  r[[1]][r[[1]] < 1e-7] <- 0
-  return(r)
+  iter <- r[[2]]
+  b <- r[[1]]
+  b[abs(b) < 1e-7] <- 0
+  return(list(b,iter))
 }
 
 # rankflassopath ----
