@@ -1,7 +1,6 @@
-library(Rrobustsp)
-library(MASS)
-library(compiler)
 library(Rcpp)
+library(R.matlab)
+library(MASS)
 
 test_that('enetpath test 1', {
   skip('skip')
@@ -26,7 +25,7 @@ test_that('enetpath test 1', {
 
 })
 
-test_that('enetpath test 1 long', {
+test_that('rankflasso test 1 long', {
   #skip('takes too long')
   # Args ----
 
@@ -70,7 +69,10 @@ test_that('enetpath test 1 long', {
 
   if(printitn > 0) sprintf('rankflasso: starting iterations\n')
 
-  r <- ladlasso(ytilde, Xtilde, lambda1, intcpt, b0, reltol = 1)
+  # ladlasso ----
+  # r <- ladlasso(ytilde, Xtilde, lambda1, intcpt, b0, reltol = 1)
+
+  # ladlasso end ----
   iter <- r[[2]]
 
   r <- r[[1]]
@@ -79,7 +81,7 @@ test_that('enetpath test 1 long', {
   expect_equal(iter, 11)
 
   load(path_test('reg_rankflasso_1'))
-  expect_equal(round(r, digits = 4), sol)
+  expect_equal(round(r, digits = 3), sol)
 })
 
 test_that('short', {
