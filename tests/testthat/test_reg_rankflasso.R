@@ -1,8 +1,7 @@
-library(Rcpp)
 library(R.matlab)
 library(MASS)
 
-test_that('enetpath test 1', {
+test_that('rankflasso test 1', {
   skip('skip')
   # Arguments ----
   load('~/Rrobustsp/data/images.RData')

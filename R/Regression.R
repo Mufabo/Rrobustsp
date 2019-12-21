@@ -463,15 +463,15 @@ hubreg <- function(y, X, c = NULL, sig0 = NULL, b0 = NULL, printitn = 0, iter_ma
 
 # ladlasso ----
 
-library(Rcpp)
-
-cppFunction(depends='RcppArmadillo', code='
-            arma::mat fRcpp (arma::mat Xstar, arma::mat X, arma::mat y) {
-            arma::mat betahat ;
-            betahat = (Xstar.t() * X ).i() * (Xstar.t() * y) ;
-            return(betahat) ;
-            }
-            ')
+# library(Rcpp)
+#
+# cppFunction(depends='RcppArmadillo', code='
+#             arma::mat fRcpp (arma::mat Xstar, arma::mat X, arma::mat y) {
+#             arma::mat betahat ;
+#             betahat = (Xstar.t() * X ).i() * (Xstar.t() * y) ;
+#             return(betahat) ;
+#             }
+#             ')
 
 #' ladlasso
 #'
@@ -530,6 +530,7 @@ ladlasso <- function(y, X, lambda, intcpt = T, b0 = NULL, reltol = 1e-8, printit
     if(printitn > 0) print('Starting the IRWLS algorithm..\n')
     if(lambda > 0){
       y <- c(y, rep(0, p))
+
       # slow
       if(intcpt) X <- rbind(X, cbind(rep(0, p), diag(lambda, p, p))) else X <- rbind(X, diag(lambda, p, p))
     }
@@ -538,8 +539,16 @@ ladlasso <- function(y, X, lambda, intcpt = T, b0 = NULL, reltol = 1e-8, printit
     for(iter in 1:iter_max){
       resid <- abs(y - X %*% b0)
       resid[resid < 1e-6] <- 1e-6
-      Xstar <- sweep(X, 1, resid, FUN = "/") # slow
-      b1 <- fRcpp(Xstar, X, matrix(y))#qr.solve(Xstar %*% X, Xstar %*% y) #c(MASS::ginv(t(Xstar) %*% X) %*% (t(Xstar) %*% y))
+
+      # slow
+      Xstar <- sweep(X, 1, resid, FUN = "/")
+
+      # slow
+      # b1 <- fRcpp(Xstar, X, matrix(y))
+
+      # b1 <- qr.solve(Xstar %*% X, Xstar %*% y)
+
+      # b1 <- c(MASS::ginv(t(Xstar) %*% X) %*% (t(Xstar) %*% y))
 
       crit <- norm(b1-b0, type = "2") / norm(b0, type = "2")
 
