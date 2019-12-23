@@ -2,13 +2,15 @@ Package: Rrobustsp
 Type: Package
 Title: Robust Signal Processing
 Version: 0.1.0
-Author: M. Fatih Bostanc
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Author: Fatih Bostanci
+Maintainer: Fatih Bostanci
+Description: R package for the robust signal processing textbook
+License: MIT
 Encoding: UTF-8
 LazyData: true
+Imports:
+  Matrix,
+  R.matlab
 Suggests: 
     testthat
 RoxygenNote: 6.1.1

@@ -1,8 +1,9 @@
 library(R.matlab)
 library(MASS)
+library(Matrix)
 
 test_that('rankflasso test 1', {
-  skip('skip')
+
   # Arguments ----
   load('~/Rrobustsp/data/images.RData')
   load(path_test('blas'))
@@ -18,8 +19,8 @@ test_that('rankflasso test 1', {
   B1 <- rankflasso(y20n, X, lambda1, lambda2, Blas)
 
 
-  #MSE_rank1 <- colSums((scaledata(B1) - y20n)^2)
-  #expect_equal(MSE_rank1, 1.058938435615084e+02)
+  MSE_rank1 <- colSums((scaledata(B1) - y20n)^2)
+  expect_equal(MSE_rank1, 1.058938435615084e+02)
 
 
 })

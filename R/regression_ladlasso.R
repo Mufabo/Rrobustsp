@@ -28,6 +28,9 @@ ladlasso <- function(y, X, lambda, intcpt = T, b0 = NULL, reltol = 1e-8, printit
   N <- nrow(X)
   p <- ncol(X)
 
+  # make matrix sparse
+  X <- Matrix(X)
+
   if(intcpt) X <- cbind(matrix(1, N, 1), X)
 
   if(is.null(b0)) b0 <- qr.solve(X, y) # ginv(X) %*% y
@@ -65,15 +68,10 @@ ladlasso <- function(y, X, lambda, intcpt = T, b0 = NULL, reltol = 1e-8, printit
       resid <- abs(y - X %*% b0)
       resid[resid < 1e-6] <- 1e-6
 
-      # slow
-      Xstar <- sweep(X, 1, resid, FUN = "/")
+      Xstar <- sweep_sparse(X, 1, resid, fun = "/")
 
-      # slow
-      # b1 <- fRcpp(Xstar, X, matrix(y))
 
-      # b1 <- qr.solve(Xstar %*% X, Xstar %*% y)
-
-      # b1 <- c(MASS::ginv(t(Xstar) %*% X) %*% (t(Xstar) %*% y))
+      b1 <- solve(Matrix::t(Xstar) %*% X, (Matrix::t(Xstar) %*% y)@x)
 
       crit <- norm(b1-b0, type = "2") / norm(b0, type = "2")
 

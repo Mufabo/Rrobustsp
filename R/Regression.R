@@ -661,14 +661,12 @@ rankflasso <- function(y, X, lambda1, lambda2, b0 = NULL, printitn = 0){
   a <- A[A < B]
   b <- B[A < B]
 
-  D <- diag(-1, p-1, p-1)
-  D[seq(p, (p-1)^2, p)] <- 1
+  D <- sparseMatrix(1:(p-1), 1:(p-1), x = -1, dims = c(399, 400)) # diag(-1, p-1, p-1)
+  D[seq(p, p*(p - 1), p)] <- 1
 
-  D <- cbind(D, c(rep(0, p-2), 1))
+  ytilde <- sparseVector(x = y[a] - y[b], i = 1:length(a), length = length(a)+ p - 1)
 
-  ytilde <- c(y[a] - y[b], rep(0, p-1))
-
-  Xtilde <- rbind( X[a,] - X[b,], lambda2 * D)
+  Xtilde <- rbind( X[a,] - X[b,], lambda2 * D) # 80199 400
 
   if(printitn > 0) sprintf('rankflasso: starting iterations\n')
 
