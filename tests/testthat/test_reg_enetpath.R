@@ -53,9 +53,28 @@ test_that('enetpath test 2', {
   B_sol2 <- B_sol[, 2:ncol(B_sol)]
   ero <- scaledata(B_sol2) - repmat(y, ncol(B_sol2))
 
-  expect_equal(ero, enetpath_test_2_ero)
+  #expect_equal(ero, enetpath_test_2_ero)
   expect_equal(B_sol, matrix(enetpath_test_2_B, 400, 21))
   expect_equal(stats_sol[[1]], NULL)
   expect_equal(stats_sol[[2]], NULL)
   expect_equal(stats_sol[[3]], enetpath_test_2_stats)
+})
+
+test_that('enetpath for prostate example', {
+  data('prostate')
+
+  X <- prostate$X
+  y <- c(prostate$y)
+
+  tmp <- enetpath(y, X, 1)
+  B_ <- tmp[[1]]
+  stats_ <- tmp[[2]]
+
+  load(path_test('B_prost'))
+  load(path_test('stats_prost'))
+
+  expect_equal(B_, B[[1]])
+  expect_equal(stats_$MSE, stats$MSE)
+  expect_equal(stats_$BIC, stats$BIC)
+  expect_equal(stats_$Lambda, stats$Lambda)
 })

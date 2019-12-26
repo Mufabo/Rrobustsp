@@ -6,7 +6,7 @@
 #' (N > 200) or elemental fits (N<200).
 #'
 #' @param y numeric response N x 1 vector (real/complex)
-#' @param X  numeric feature  N x p matrix (real/complex)
+#' @param X sparse matrix, numeric feature  N x p matrix (real/complex)
 #' @param lambda numeric, non-negative penalty parameter
 #' @param intcpt numeric optional initial start of the regression vector for
 #'        IRWLS algorithm. If not given, we use LSE (when p>1).
@@ -29,7 +29,7 @@ ladlasso <- function(y, X, lambda, intcpt = T, b0 = NULL, reltol = 1e-8, printit
   p <- ncol(X)
 
   # make matrix sparse
-  X <- Matrix(X)
+  X <- sparseMatrix(i = row(X)[row(X) != 0], j = col(X)[col(X) != 0], x=c(X))
 
   if(intcpt) X <- cbind(matrix(1, N, 1), X)
 
@@ -68,6 +68,7 @@ ladlasso <- function(y, X, lambda, intcpt = T, b0 = NULL, reltol = 1e-8, printit
       resid <- abs(y - X %*% b0)
       resid[resid < 1e-6] <- 1e-6
 
+      # make if else for dense matrices
       Xstar <- sweep_sparse(X, 1, resid, fun = "/")
 
 

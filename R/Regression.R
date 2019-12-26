@@ -28,67 +28,6 @@ elemfits <- function(y, x){
 }
 
 
-# enet ----
-
-#'   enet
-#'
-#'   enet computes the elastic net estimator using the cyclic co-ordinate
-#'   descent (CCD) algorithm.
-#'
-#'@param       y : (numeric) data vector of size N x 1 (output, respones)
-#'           if the intercept is in the model, then y needs to be centered.
-#'@param    X : (numeric) data matrix of size N x p (input, features)
-#'             Columns are assumed to be standardized (i.e., norm(X(:,j))=1)
-#'             as well as centered (if intercept is in the model).
-#'@param   beta : (numeric) regression vector for initial start for CCD algorithm
-#'@param lambda : (numeric) a postive penalty parameter value
-#'@param alpha  : (numeric) elastic net tuning parameter in the range [0,1]. If
-#'             not given then use alpha = 1 (Lasso)
-#'@param printitn: print iteration number (default = 0, no printing)
-#'
-#'@return     beta    : (numeric) the regression coefficient vector
-#'@return iter  : (numeric) # of iterations
-#'@export
-enet <- function(y, X, beta, lambda, alpha=1, printitn=0, itermax = 1000){
-  # check for valid arguments
-
-  p <- ncol(X)
-
-  betaold <- beta
-  normb0 <- norm(beta, type = "2")
-  r <- y - X %*% beta
-
-  lam1 <- alpha * lambda
-  lam2 <- lambda * (1-alpha)
-
-  const <- 1/(1+lam2)
-
-  if(printitn > 0){
-    cat('enet : using penalty lambda = ', round(lambda, digits=5))
-  }
-
-  for(iter in 1:itermax){
-    for(jj in 1:p){
-      beta[jj] <- const*soft_thresh(beta[jj]+ t(X[,jj]) %*% r, lam1)
-      r <- r + X[,jj]*(betaold[jj]-beta[jj])
-    }
-
-    normb <- norm(beta, type = "2")
-
-    crit <- sqrt(normb0^2 + normb^2 - 2 * Re(t(betaold) %*% beta))/normb
-
-    if(!is.na(iter%%printitn) && (iter %% printitn) == 0){
-      sprintf('enet: %4d  crit = %.8f\n',iter,crit)
-    }
-
-    if(is.nan(crit) | crit < 1e-4) {return (list(beta, iter)) }
-
-    betaold <- beta
-    normb0 <- normb
-  }
-
-}
-
 # enetpath ----
 
 #' enetpath
@@ -127,14 +66,14 @@ enetpath <- function(y, X, alpha=1,  L=100, eps=1e-4, intcpt=TRUE, printitn=0){
   if(intcpt){
     meanX <- colMeans(X)
     meany <- mean(y)
-    X <- X - meanX
+    X <- sweep(X, 2, meanX) #X - meanX
     y <- y - meany
   }
 
   if (printitn>0) sprintf('enetpath: using alpha = %.1f \n', alpha)
 
   sdX = sqrt(colSums(X * Conj(X)))
-  X <- X / sdX
+  X <- sweep(X, 2, sdX, FUN = '/')
 
   # smallest penalty value giving zero solution
   lam0 <- norm(t(X) %*% y , type="I")/alpha
@@ -271,195 +210,7 @@ hublasso <- function(y, X, c = NULL, lambda, b0,  sig0, reltol = 1e-5, printitn 
   return (list(b0, sig0, psires))
 }
 
-# hublassopath ----
 
-#'   hublassopath computes the M-Lasso regularization path (over grid
-#'                                                            of penalty parameter values) using Huber's loss function
-#'
-#'@param          y: Numeric data vector of size N x 1 (output, respones)
-#'@param          X: Numeric data matrix of size N x p. Each row represents one
-#'             observation, and each column represents one predictor (feature)
-#'             columns are standardized to unit length.
-#'@param          c: Threshold constant of Huber's loss function (optional;
-#'                                                                       otherwise use default value)
-#'@param       intcpt: Logical (true/false) flag to indicate if intercept is in the
-#'             regression mode. Default is true.
-#'@param        eps: Positive scalar, the ratio of the smallest to the
-#'             largest Lambda value in the grid. Default is eps = 10^-3.
-#'@param         L : Positive integer, the number of lambda values EN/Lasso uses.
-#'             Default is L=120.
-#'@param     reltol : Convergence threshold for IRWLS. Terminate when successive
-#'             estimates differ in L2 norm by a rel. amount less than reltol. default: 1e-05
-#'@param   printitn: print iteration number (default = 0, no printing)
-#'
-#'@return       B    : Fitted M-Lasso regression coefficients, a p-by-(L+1) matrix,
-#'            where p is the number of predictors (columns) in X, and L is
-#'            the  number of Lambda values.
-#'@return       B0 : estimates values of intercepts
-#'@return   stats  : structure with following fields:
-#'\itemize{
-#'               \item Lambda = lambda parameters in ascending order
-#'             \item sigma = estimates of the scale (a (L+1) x 1 vector)
-#'             \item gBIC = generalized Bayesian information criterion (gBIC) value
-#'                   for each lambda parameter on the grid.}
-#'@export
-hublassopath <- function(y, X, c = NULL, L = 120, eps =10^-3, intcpt = T, reltol = 1e-5, printitn = 0){
-  n <- nrow(X)
-  p <- ncol(X)
-
-  if(is.complex(y)) real_data <- F else real_data <- T
-  # Default: approx 95 efficiency for Gaussian errors
-  if(is.null(c)){if(real_data) c <- 1.3414 else c <- 1.215}
-
-  tmp <- hubreg(y, matrix(1, n, 1), c)
-  locy <- tmp[[1]]
-  sig0 <- tmp[[2]]
-
-  if(intcpt){
-    # center data
-    ync <- y
-    Xnc <- X
-
-    meanX <- colMeans(X)
-    X <- X - meanX
-    y <- y - locy
-  }
-
-  # standardize the predictor to unit norm columns
-  sdX <- sqrt(colSums(X * Conj(X)))
-  X <- X / sdX
-
-  # compute the smallest penalty value yielding a zero solution
-  yc <- psihub(y / sig0, c) * sig0
-  lam0 <- norm(t(X) %*% yc, type = "i")
-
-  lamgrid <- eps^((0:L) / L) * lam0
-  B <- matrix(0, p, L+1)
-  sig <- matrix(0, 1, L+1)
-  sig[1] <- sig0
-
-  for(jj in 1:L){
-    tmp <- hublasso(y, X, c, lamgrid[jj+1], B[,jj], sig[jj], reltol, printitn)
-    B[, jj+1] <- tmp[[1]]
-    sig[jj+1] <- tmp[[2]]
-  }
-
-  B[abs(B) < 5e-8] <- 0
-  DF <- colSums(abs(B) != 0)
-  con <- sqrt
-
-  if(n > p) gBIC <- 2 * n * log(sig * con) + DF * log(n) else gBIC <- NULL
-
-  B <- B / sdX
-
-  # compute the intercept if in the model
-  if(intcpt) B0 <- locy - meanX * B else B <- NULL
-
-  stats <- list(gBIC, sig, lamgrid)
-  names(stats) <- c('gBIC', 'sigma', 'Lambda')
-
-  return( list(B, B0, stats))
-}
-
-# hubreg ----
-
-#'   hubreg: regression and scale using Huber's criterion
-#'
-#'   hubreg computes the joint M-estimates of regression and scale using
-#'   Huber's criterion. Function works for both real- and complex-valued data.
-#'
-#'
-#'@param   y: Numeric data vector of size N x 1 (output, respones)
-#'@param   X: Numeric data matrix of size N x p. Each row represents one
-#'             observation, and each column represents one predictor (feature).
-#'             If the model has an intercept, then first column needs to be a
-#'             vector of ones.
-#'@param    c: numeric threshold constant of Huber's function
-#'@param    sig0: (numeric) initial estimator of scale \cr
-#'          default = SQRT(1/(n-p)*RSS)
-#'@param    b0: initial estimator of regression (default: LSE)
-#'@param    printitn: print iteration number (default = 0, no printing)
-#'@param    iter_max: maximum number of iterations. \cr default = 2000
-#'@param    errortol: ERROR TOLERANCE FOR HALTING CRITERION. \cr default = 1e-5
-#'
-#'@return    b1: the regression coefficient vector estimate
-#'@return    sig1: the estimate of scale
-#'@return    iter: the # of iterations
-#'
-#'@references
-#'uses \code{\link[MASS]{ginv}} from the MASS package
-#'
-#'@examples
-#'y <- c(1.0347, 0.7269, -0.3034, 0.2939, -0.7873)
-#'X <- matrix(c(0.884, -1.1471, -1.0689, -0.8095, -2.9443, 1.4384, 0.3252, -0.7549, 1.3703, -1.7115), 5, 2)
-#'
-#'hubreg(y, X)
-#'hubreg(y+1i, X)
-#'hubreg(y+1i, X+1i)
-#'hubreg(y, X+1i)
-#'@note
-#'results slightly different from MATLAB
-#'@export
-hubreg <- function(y, X, c = NULL, sig0 = NULL, b0 = NULL, printitn = 0, iter_max = 2000, errortol = 1e-5){
-  n <- nrow(X)
-  p <- ncol(X)
-
-  if(is.complex(y)) real_data <- F else real_data <- T
-  # Default: approx 95 efficiency for Gaussian errors
-  if(is.null(c)){if(real_data) c <- 1.3415 else c <- 1.215}
-
-  if(is.null(b0)) b0 <- ginv(X) %*% y
-
-  # use unbiased residual sum of squares as initial estimate of scale
-  if(is.null(sig0)){sig0 <- norm(y - X %*% b0, type = "2") /
-    sqrt(n - p)}
-
-  csq <- c^2
-
-  # consistency factor for scale
-  if(real_data){
-    qn <- pchisq(csq, 1)
-    alpha <- pchisq(csq, 3) + csq * (1 - qn)
-  } else{
-    qn <- pchisq(2 * csq, 2)
-    alpha <- pchisq(2 * csq, 4) + csq * (1 - qn)
-  }
-
-  Z <- ginv(X)
-
-  con <- sqrt((n - p) * alpha)
-
-  for(iter in 1:iter_max){
-    # Step 1: Update residual
-    r <- y - X %*% b0
-    psires <- psihub(r / sig0, c) * sig0
-
-    # Step 2: Update the scale
-    sig1 <- norm(psires, type ="2") / con
-
-    # Step 3: Update the pseudo-residual
-    psires <- psihub(r / sig1, c) * sig1
-
-    # Step 4: regress X on pseudo-residual
-    update <- Z %*% psires
-
-    # Step 5: update the beta
-    b1 <- b0 + update
-
-    # Step 6 check convergence
-    crit2 <- norm(update, type = "2") / norm(b0, type = "2")
-    if(printitn > 0 & iter %% printitn) sprintf('hubreg: crit(%4d) = %.9f\n',iter,crit2)
-
-    if(is.na(crit2) | errortol) break
-
-    b0 <- b1
-    sig0 <- sig1
-
-    if(iter == iter_max) sprintf('error!!! MAXiter = %d crit2 = %.7f\n',iter,crit2)
-  }
-
-  return( list(b1, sig1, iter))
-}
 
 
 
@@ -511,7 +262,7 @@ ladlassopath <- function(y, X, L = 120, eps = 1e-3, intcpt = T, reltol = 1e-6, p
   if(intcpt) binit <- c(medy, numeric(p-1)) else binit <- numeric(p)
 
   for(jj in 1:(L+1)){
-    B[,jj] <- ladlasso(y,X, lamgrid[jj], intcpt, binit, reltol, printitn)
+    B[,jj] <- ladlasso(y,X, lamgrid[jj], intcpt, binit, reltol, printitn)[[1]]
     binit <- B[,jj]
   }
 
@@ -775,7 +526,7 @@ ranklasso <- function(y, X, lambda, b0 = NULL, printitn = F){
   intcpt <- F
 
   if(is.null(b0)){
-    b0 <- y / cbind(rep(1, n), X)
+    b0 <- qr.solve(cbind(rep(1, n), X), y)
     b0 <- b0[2:length(b0)]
   }
 
@@ -791,98 +542,6 @@ ranklasso <- function(y, X, lambda, b0 = NULL, printitn = F){
 
   return(ladlasso(ytilde, Xtilde, lambda, intcpt, b0, printitn))
 }
-
-# ranklassopath ----
-
-#' ranklassopath
-#'
-#' ranklassopath computes the rank LAD-Lasso regularization path (over grid
-#'                                                                  of penalty parameter values). Uses IRWLS algorithm.
-#'
-#' @param         y: Numeric data vector of size N (output, respones)
-#' @param       X: Numeric data matrix of size N x p. Each row represents one
-#'           observation, and each column represents one predictor (feature).
-#' @param       L: Positive integer, the number of lambda values on the grid to be
-#'           used. The default is L=120.
-#' @param     eps: Positive scalar, the ratio of the smallest to the
-#'           largest Lambda value in the grid. Default is eps = 10^-3.
-#' @param  reltol: Convergence threshold for IRWLS. Terminate when successive
-#'          estimates differ in L2 norm by a rel. amount less than reltol.
-#' @param printitn: print iteration number (default = F, no printing)
-#'
-#' @return          B: Fitted RLAD-Lasso regression coefficients, a p-by-(L+1) matrix,
-#'           where p is the number of predictors (columns) in X, and L is
-#'           the  number of Lambda values.
-#' @return      B0: estimates values of intercepts
-#' @return   stats: structure with following fields:
-#'             Lambda = lambda parameters in ascending order
-#'             GMeAD = Mean Absolute Deviation (MeAD) of the residuals
-#'             gBIC = generalized Bayesian information criterion (gBIC) value
-#'                  for each lambda parameter on the grid.
-#'
-#' @examples
-#' y <- 1:5
-#' X <- matrix(rnorm(15),5,3)
-#'
-#' tmp <- ranklassopath(y, X)
-#'
-#'
-#' tmp[[1]] # B
-#' tmp[[2]] # B0
-#' tmp[[3]]['GMeAD'] # stats fiedl GMeAD
-#'
-#'
-#' @export
-ranklassopath <- function(y, X, L = 120, eps = 1e-3, reltol = 1e-7, printitn = F){
-  n <- nrow(X)
-  p <- ncol(X)
-  intcpt <- F
-
-  B <- repmat(1:n, n)
-
-  A <- t(B)
-  a <- A[A < B]
-  b <- B[A < B]
-
-  Xtilde <- X[a,] - X[b,]
-  ytilde <- y[a] - y[b]
-
-  lam0 <- norm(t(Xtilde) %*% mat_sign(ytilde), type = "I")
-
-  lamgrid <- eps^((0:L)/L) * lam0
-
-  B <- diag(0, p, L + 1)
-  B0 <- numeric(L + 1)
-  b_init <- numeric(L + 1)
-
-  for(jj in 1:(L + 1)){
-    B[, jj] <- ladlasso(ytilde, Xtilde, lamgrid[jj], intcpt, b_init, reltol, printitn)
-    b_init <- B[, jj]
-    r <- y - X %*% b_init
-    if(is.complex(X)) B[, jj] <- spatmed((r[a] - r[b]) / 2) else B[, jj] <- median((r[a] - r[b]) / 2)
-
-  }
-
-  B[abs(B) < 1e-7] <- 0
-
-  DF <- colSums(abs(B) != 0)
-
-  # Compute the generalized BIC (gBIC) values
-  Rmat <- repmat(ytilde, L + 1) - Xtilde %*% B # matrix of residuals
-  N <- (n - 1) / 2
-  GMeAD <- (sqrt(pi) / 2) * colMeans(abs(Rmat)) # Gini's dispersion
-  GmeAD <- GMeAD * sqrt(n / (n - DF -1))
-
-  gBIC <- 2 * n * log(GMeAD) + DF * log(n)
-
-  Lambda <- lamgrid
-
-  stats <- list(DF, GMeAD, gBIC, Lambda)
-  names(stats) <- c('DF', 'GMeAD', 'gBIC', 'Lambda')
-
-  return(list(B, B0, stats))
-}
-
 
 
 # rladreg ----
