@@ -423,7 +423,7 @@ rankflasso <- function(y, X, lambda1, lambda2, b0 = NULL, printitn = 0){
 
   r <- ladlasso(ytilde, Xtilde, lambda1, intcpt, b0, printitn)
   iter <- r[[2]]
-  b <- r[[1]]
+  b <- matrix(r[[1]]) # wrapped in matrix
   b[abs(b) < 1e-7] <- 0
   return(list(b,iter))
 }

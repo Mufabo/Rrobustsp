@@ -29,7 +29,7 @@ ladlasso <- function(y, X, lambda, intcpt = T, b0 = NULL, reltol = 1e-8, printit
   p <- ncol(X)
 
   # make matrix sparse
-  X <- sparseMatrix(i = row(X)[row(X) != 0], j = col(X)[col(X) != 0], x=c(X))
+  # X <- sparseMatrix(i = row(X)[row(X) != 0], j = col(X)[col(X) != 0], x=c(X))
 
   if(intcpt) X <- cbind(matrix(1, N, 1), X)
 
@@ -63,16 +63,23 @@ ladlasso <- function(y, X, lambda, intcpt = T, b0 = NULL, reltol = 1e-8, printit
       if(intcpt) X <- rbind(X, cbind(rep(0, p), diag(lambda, p, p))) else X <- rbind(X, diag(lambda, p, p))
     }
 
+    if(class(X) == "matrix"){
+      sweep2 <- function(x, y){sweep(x, MARGIN = 1, y, FUN = '/')}
+      solve2 <- function(Xstar, X, y){solve(t(Xstar) %*% X, (t(Xstar) %*% y))}
+      }
+    else{
+      sweep2 <- function(x, y){sweep_sparse(x, margin = 1, y, fun = '/')}
+      solve2 <- function(Xstar, X, y){solve(Matrix::t(Xstar) %*% X, (Matrix::t(Xstar) %*% y)@x)}
+    }
 
     for(iter in 1:iter_max){
       resid <- abs(y - X %*% b0)
       resid[resid < 1e-6] <- 1e-6
 
       # make if else for dense matrices
-      Xstar <- sweep_sparse(X, 1, resid, fun = "/")
+      Xstar <- sweep2(X, resid)
 
-
-      b1 <- solve(Matrix::t(Xstar) %*% X, (Matrix::t(Xstar) %*% y)@x)
+      b1 <- solve2(Xstar, X, y)
 
       crit <- norm(b1-b0, type = "2") / norm(b0, type = "2")
 
