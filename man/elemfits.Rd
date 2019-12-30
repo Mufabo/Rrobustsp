@@ -10,11 +10,20 @@
 \usage{
 elemfits(y, x)
 }
-\description{
-@param   y : (numeric) N x 1 vector of real-valued outputs (response vector)
-   @param   x : (numeric) N x 1 vector of inputs (feature vector)
+\arguments{
+\item{y}{: (numeric) N  vector of real-valued outputs (response vector)}
+
+\item{x}{: (numeric) N  vector of inputs (feature vector)}
 }
-\details{
-@return    beta: (numeric) N*(N-1)/2 matrix of elemental fits
-   @return   w: (numeric) N*(N-1)/2 matrix of weights
+\value{
+beta: (numeric) N*(N-1)/2 matrix of elemental fits
+
+w: (numeric) N*(N-1)/2 matrix of weights
+}
+\description{
+[beta, w] = elemfits(x,y)
+  elemfits compute the Nx(N-1)/2 elemental fits, i.e., intercepts b_{0,ij}
+  and slopes b_{1,ij}, that define a line y = b_0+b_1 x that passes through
+  the data points (x_i,y_i) and (x_j,y_j), i<j, where i, j in {1, ..., N}.
+  and the respective weights | x_i - x_j |
 }

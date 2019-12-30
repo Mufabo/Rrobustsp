@@ -18,19 +18,7 @@ madn <- function(y)
     return (const*median(abs(y-median(y))))
 }
 
-#' repmat
-#'  matlab like repmat, vector v is replicate s times columnwise into a matrix
-#'@export
-repmat <- function(v, s) matrix(v, nrow=length(v), ncol=s)
 
-#' mat_sign
-#'
-#' sign that also works for complex numbers
-#' @export
-mat_sign <- function(x){
-    if(is.complex(x)) res <- x / abs(x) else res <- sign(x)
-    return(res)
-}
 
 #'Huber's score function
 #'
