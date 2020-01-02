@@ -12,9 +12,7 @@
 #' @return P : aposteriors covariance
 #'
 #' @examples
-#' ekf_toa(matrix(rnorm(16), 4, 4),
-#'         rnorm(4),
-#'         matrix(rnorm(8), 4, 2))
+#'
 #' @references
 #' "Robust Statistics for Signal Processing"
 #'  Zoubir, A.M. and Koivunen, V. and Ollila, E. and Muma, M.
@@ -56,7 +54,7 @@ ekf_toa <- function(r_ges, theta_init, BS, parameter = NULL){
   M <- length(x)
   N <- ncol(r_ges)
 
-  P <- to.tensor(0,c(U=4,V=4,W=N))
+  P <- tensorA::to.tensor(0,c(U=4,V=4,W=N))
   th_hat <- matrix(theta_init, length(theta_init), N)
   th_hat_min <- matrix(0, 4, N)
   P_min <- to.tensor(0,c(U=4,V=4,W=N))

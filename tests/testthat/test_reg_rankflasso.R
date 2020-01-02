@@ -3,7 +3,7 @@ library(MASS)
 library(Matrix)
 
 test_that('rankflasso test 1', {
-
+  skip('too long')
   # Arguments ----
   load('~/Rrobustsp/data/images.RData')
   load(path_test('blas'))
@@ -26,7 +26,7 @@ test_that('rankflasso test 1', {
 })
 
 test_that('rankflasso test 1 long', {
-  #skip('takes too long')
+  skip('takes too long')
   # Args ----
 
   X <- diag(1, 400, 400) # Matrix::sparseMatrix(1:400, 1:400, x = 1)#

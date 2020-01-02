@@ -26,9 +26,7 @@ P : aposteriors covariance
 EKF for tracking with time-of-arrival (:= ToA) estimates
 }
 \examples{
-ekf_toa(matrix(rnorm(16), 4, 4),
-        rnorm(4),
-        matrix(rnorm(8), 4, 2))
+
 }
 \references{
 "Robust Statistics for Signal Processing"
