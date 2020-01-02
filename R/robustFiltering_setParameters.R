@@ -25,9 +25,9 @@ parameter$motionmodel <- 'random-force'
 parameter$noisestructure <- 'Markov'
 parameter$figure <- 1
 parameter$plot <- 'mse'
-parameter$MarkovChain <- to.tensor(0,c(U=2
-                                       ,V=2
-                                       ,W=parameter$M))
+#parameter$MarkovChain <- to.tensor(0,c(U=2
+#                                       ,V=2
+#                                       ,W=parameter$M))
 
 
 
