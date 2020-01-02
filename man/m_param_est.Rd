@@ -4,7 +4,7 @@
 \alias{m_param_est}
 \title{m_param_est}
 \usage{
-m_param_est(receive, C, parameter)
+m_param_est(receive, C, Theta, param)
 }
 \arguments{
 \item{recieve:}{is the received signal}
@@ -13,9 +13,9 @@ m_param_est(receive, C, parameter)
 
 \item{C:}{is the regression matrix of the model y = C*x + n}
 
-\item{parameter.maxiters:}{maximal number of iterations}
+\item{param.maxiters:}{maximal number of iterations}
 
-\item{parameter.break:}{break condition}
+\item{param.break:}{break condition}
 }
 \value{
 th2: M-estimate of regression

@@ -514,8 +514,8 @@ rankflassopath <- function(y, X, lambda2, L = 120, eps = 1e-3, printitn = F){
 #' @param printitn : bool, print iteration number (default = F, no printing) and
 #'            other details
 #'
-#' @result    b1     : numeric the regression coefficient vector
-#' @result  iter   : (numeric) # of iterations (given when IRWLS algorithm is used)
+#' @return    b1     : numeric the regression coefficient vector
+#' @return   iter   : (numeric) # of iterations (given when IRWLS algorithm is used)
 #'
 #' @examples
 #'

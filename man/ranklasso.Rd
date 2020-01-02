@@ -19,6 +19,11 @@ iterations. If not given, we use LSE.}
 \item{printitn}{: bool, print iteration number (default = F, no printing) and
 other details}
 }
+\value{
+b1     : numeric the regression coefficient vector
+
+iter   : (numeric) # of iterations (given when IRWLS algorithm is used)
+}
 \description{
 ranklasso computes the rank (LAD-)regression estimate
 }
