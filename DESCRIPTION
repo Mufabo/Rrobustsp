@@ -12,7 +12,10 @@ LazyData: true
 Imports:
   Matrix,
   pracma,
-  R.matlab
+  R.matlab,
+  MASS,
+  tensorA,
+  zeallot
 Suggests: 
     testthat
 RoxygenNote: 6.1.1
