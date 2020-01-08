@@ -15,7 +15,10 @@ Imports:
   R.matlab,
   MASS,
   tensorA,
-  zeallot
+  zeallot,
+  TSA,
+  signal,
+  purrr
 Suggests: 
     testthat
 RoxygenNote: 6.1.1
