@@ -44,7 +44,9 @@ arma_s_resid <- function(x, beta_hat, p, q){
 }
 
 
-
+#' arma_tau_resid_sc
+#'
+#' @export
 arma_tau_resid_sc <- function(x, beta_hat, p, q){
   # phi_hat := AR coefficients
   if(0 < p){phi_hat <- beta_hat[1:p]} else phi_hat <- numeric(0)
@@ -354,7 +356,7 @@ bip_tau_resid_sc <- function(x, beta_hat, p, q){
           # ARMA residuals
           a_bip[ii] <- x[ii] - phi_hat %*% (x[seq.int(ii-1, ii-p, by = -1)] - a_bip[seq.int(ii-1, ii-p, by = -1)] +
                                               sigma_hat * Rrobustsp::eta(a_bip[seq.int(ii-1, ii-p, by = -1)]/sigma_hat)) +
-            theta_hat %*% sigma_hat %*% Rrobustsp::eta(a_bip[seq.int(ii-1, ii-q, by = -1)] / sigma_hat)
+            (theta_hat * sigma_hat) %*% Rrobustsp::eta(a_bip[seq.int(ii-1, ii-q, by = -1)] / sigma_hat)
         }
       }
       # MA model

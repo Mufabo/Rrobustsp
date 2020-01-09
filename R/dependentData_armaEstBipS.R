@@ -20,10 +20,10 @@ arma_est_bip_s <- function(x, p, q, tolX = 1e-2){
   F <- function(beta) arma_s_resid_sc(x, beta, p, q)
   F_bip <- function(beta) bip_s_resid_sc(x, beta, p, q)[[1]]
 
-  beta_arma <- lsqnonlin(F, beta_initial, options = list(
+  beta_arma <- lsqnonlin(F, -beta_initial, options = list(
     'tolx' = tolX))$x
 
-  beta_bip <- lsqnonlin(F_bip, beta_initial, options = list(
+  beta_bip <- lsqnonlin(F_bip, -beta_initial, options = list(
     'tolx' = tolX))$x
 
   # innovations m-scale for ARMA model

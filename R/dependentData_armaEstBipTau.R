@@ -15,14 +15,16 @@ arma_est_bip_tau <- function(x, p, q){
 
   # Robust starting point by BIP AR-S approximation
   beta_initial <- robust_starting_point(x, p, q)[[1]]
+  # remove intercept from coefficients
+  beta_initial <- head(beta_initial, -1)
 
   # objective function for ARMA model and BIP-ARMA model
   F <- function(beta) arma_tau_resid_sc(x, beta, p, q)
   F_bip <- function(beta) bip_tau_resid_sc(x, beta, p, q)[[1]]
 
-  beta_arma <- lsqnonlin(F, beta_initial)$x
+  beta_arma <- lsqnonlin(F, -beta_initial, options = list(tolx = 5e-7))$x
 
-  beta_bip <- lsqnonlin(F_bip, beta_initial)$x
+  beta_bip <- lsqnonlin(F_bip, -beta_initial)$x
 
   # innovations tau-scale for ARMA model
   a_sc <- arma_tau_resid_sc(x, beta_arma, p, q)[[1]]
