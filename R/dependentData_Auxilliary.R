@@ -1,4 +1,9 @@
 
+#' eta
+#'
+#' @param x: numeric vector, the signal
+#' @param c: numeric, default = 1
+#'
 #' @examples
 #' library(Rrobustsp)
 #'
