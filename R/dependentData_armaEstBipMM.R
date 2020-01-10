@@ -1,9 +1,8 @@
-#' arma_est_bip_m
+#' arma_est_bip_mm
 #'
-#'  The function  arma_est_bip_m(x,p,q) comuptes the BIP M-estimation step for BIP MM estimates of the
-#'  ARMA model parameters. It can also be used as a stand-alone
-#'  M-estimator.
-#'
+#' The function  arma_est_bip_mm(x,p,q) comuptes BIP MM-estimates of the
+#' ARMA model parameters.
+#' It also computes an outlier cleaned signal using BIP-ARMA(p,q) predictions
 #'
 #' @param x: data (observations/measurements/signal)
 #' @param p: autoregressive order
@@ -11,9 +10,14 @@
 #' @param beta_hat_s: BIP S-estimate
 #' @param a_sc_final: M scale estimate of residuals of BIP S-estimate
 #'
+#' @return result: named list with following fields
+#'                 ar_coeffs : numeric vector of length p. BIP-AR(p) MM estimates
+#'                 ma_coeffs : numeric vector of length q. BIP-AR(q) MM estimates
+#'                 inno_scale : numeric, BIP s-estimate of the innovations scale
+#'                 ar_coeffs_init : numeric vector of length p. Robust starting point for estimation
+#'                 ma_coeffs_init : numeric vector of length q. Robust starting point for estimation
 #'
-#' @return ar_coeffs: vector of BIP-AR(p) MM-estimates
-#' @return ma_coeffs: vector of BIP-MA(q) MM-estimates
+#'
 #'
 #' @references
 #'

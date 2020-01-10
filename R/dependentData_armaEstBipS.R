@@ -13,7 +13,7 @@ arma_est_bip_s <- function(x, p, q, tolX = 1e-2){
 
   # Robust starting point by BIP AR-S approximation
   beta_initial <- robust_starting_point(x, p, q)$beta_initial
-
+  beta_initial <- head(beta_initial, -1) # remove intercept
   result <- list()
 
   # objective function for ARMA model and BIP-ARMA model
