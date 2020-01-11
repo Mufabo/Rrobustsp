@@ -30,7 +30,7 @@ robust_starting_point <- function(x, p, q, recursion_num = 0){
   ){
     if(recursion_num < 3)
       c(beta_initial, x_filt) %<-% robust_starting_point(x_filt, p, q, recursion_num + 1)
-    else beta_initial <- arima(x_filt, order = c(p, 0, q), include.mean = T, transform.pars = T)$coef
+    else beta_initial <- numeric(p+q+1)#arima(x_filt, order = c(p, 0, q), include.mean = T, transform.pars = T)$coef
   }
 
   return(list('beta_initial' = beta_initial, 'x_filt' = x_filt))
