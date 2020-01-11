@@ -8,7 +8,7 @@
 #' @param p: AR order
 #' @param q: MA order
 #' @param tolx: threshold value that is passed to pracma::lsqnonlin.
-#'              Default = 5e-7
+#'              Default = 1e-8
 #'
 #' @return result: named list with following fields
 #'                 ar_coeffs : numeric vector of length p. BIP-AR(p) tau estimates
@@ -32,7 +32,7 @@
 #' file is in dependentData_arma_Est_BipTau.R
 #'
 #' @export
-arma_est_bip_tau <- function(x, p, q, tolx = 5e-7){
+arma_est_bip_tau <- function(x, p, q, tolx = 1e-8){
   result <- list()
 
   if(p == 0 && q == 0){
@@ -55,7 +55,7 @@ arma_est_bip_tau <- function(x, p, q, tolx = 5e-7){
 
   beta_arma <- lsqnonlin(F, -beta_initial, options = list(tolx = tolx))$x
 
-  beta_bip <- lsqnonlin(F_bip, -beta_initial)$x
+  beta_bip <- lsqnonlin(F_bip, -beta_initial, options = list(tolx = tolx))$x
 
   # innovations tau-scale for ARMA model
   a_sc <- arma_tau_resid_sc(x, beta_arma, p, q)[[1]]

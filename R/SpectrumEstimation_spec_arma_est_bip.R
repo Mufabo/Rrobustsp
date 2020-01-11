@@ -32,13 +32,13 @@ bip_tau_arma_PSD_book <- function(x, p, q){
 #' File located in SpectrumEstimation_spec_arma_est_bip.R
 #'
 #' @export
-spec_arma_est_bip_mm <- function(x, p, q){
+spec_arma_est_bip_mm <- function(x, p, q, tolx = 5e-7){
   x <- x - median(x)
   N <- length(x)
   w <- linspace(0, pi, N/2)
   s <- exp(1i * w)
 
-  result <- arma_est_bip_mm(x, p, q)
+  result <- arma_est_bip_mm(x, p, q, tolX = tolx)
 
   beta_hat <- c(result$ar_coeffs, result$ma_coeffs)
 
@@ -58,13 +58,13 @@ spec_arma_est_bip_mm <- function(x, p, q){
 #' File located in SpectrumEstimation_spec_arma_est_bip.R
 #'
 #' @export
-spec_arma_est_bip_s <- function(x, p, q){
+spec_arma_est_bip_s <- function(x, p, q, tolx = 5e-7){
   x <- x - median(x)
   N <- length(x)
   w <- linspace(0, pi, N/2)
   s <- exp(1i * w)
 
-  result <- arma_est_bip_s(x, p, q)
+  result <- arma_est_bip_s(x, p, q, tolX = tolx)
 
   beta_hat <- c(result$ar_coeffs, result$ma_coeffs)
 
@@ -84,13 +84,13 @@ spec_arma_est_bip_s <- function(x, p, q){
 #' File located in SpectrumEstimation_spec_arma_est_bip.R
 #'
 #' @export
-spec_arma_est_bip_tau <- function(x, p, q){
+spec_arma_est_bip_tau <- function(x, p, q, tolx = 5e-7){
   x <- x - median(x)
   N <- length(x)
   w <- linspace(0, pi, N/2)
   s <- exp(1i * w)
 
-  result <- arma_est_bip_tau(x, p, q)
+  result <- arma_est_bip_tau(x, p, q, tolx = tolx)
 
   beta_hat <- c(result$ar_coeffs, result$ma_coeffs)
 

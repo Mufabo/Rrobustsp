@@ -28,7 +28,7 @@ robust_starting_point <- function(x, p, q, recursion_num = 0){
   if(sum(abs(roots(c(1, -beta_initial[0:p])))) > 1 |
      sum(abs(roots(c(1, -beta_initial[(0+p):(p+q)]))) > 1)
   ){
-    if(recursion_num < 100)
+    if(recursion_num < 3)
       c(beta_initial, x_filt) %<-% robust_starting_point(x_filt, p, q, recursion_num + 1)
     else beta_initial <- arima(x_filt, order = c(p, 0, q), include.mean = T, transform.pars = T)$coef
   }
