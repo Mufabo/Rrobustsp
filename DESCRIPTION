@@ -3,9 +3,8 @@ Type: Package
 Title: Robust Signal Processing
 Version: 0.1.0
 Author: Fatih Bostanci
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Maintainer: Fatih Bostanci <yourself@somewhere.net>
+Description: Based on the Robust signal processing Matlab toolbox by Muma et al.
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
