@@ -1,3 +1,8 @@
+#' arma_s_resid
+#'
+#' @note
+#' File is in dependentData_Auxiliary_armaResid.R
+#'@export
 arma_s_resid <- function(x, beta_hat, p, q){
   # phi_hat := AR coefficients
   if(0 < p){phi_hat <- beta_hat[1:p]} else phi_hat <- numeric(0)
@@ -46,6 +51,8 @@ arma_s_resid <- function(x, beta_hat, p, q){
 
 #' arma_tau_resid_sc
 #'
+#' @note
+#' File is in dependentData_Auxiliary_armaResid.R
 #' @export
 arma_tau_resid_sc <- function(x, beta_hat, p, q){
   # phi_hat := AR coefficients
@@ -93,7 +100,11 @@ arma_tau_resid_sc <- function(x, beta_hat, p, q){
 #' bip_resid
 #'
 #' @note
+#' File is in dependentData_Auxiliary_armaResid.R
+#'
+#' @note
 #' slightly different result than matlab
+#' File in dependentData_Auxiliary_armaResid
 #'
 #' @export
 bip_resid <- function(x, beta_hat, p, q){
@@ -128,13 +139,13 @@ bip_resid <- function(x, beta_hat, p, q){
           # ARMA residuals
           a_bip[ii] <- x[ii] - phi_hat %*% (x[seq.int(ii-1, ii-p, by = -1)] - a_bip[seq.int(ii-1, ii-p, by = -1)] +
                                              sigma_hat *Rrobustsp::eta(a_bip[seq.int(ii-1, ii-p, by = -1)]/sigma_hat)) +
-           theta_hat %*% sigma_hat %*%Rrobustsp::eta(a_bip[seq.int(ii-1, ii-q, by = -1)] / sigma_hat)
+           (theta_hat * sigma_hat) %*% Rrobustsp::eta(a_bip[seq.int(ii-1, ii-q, by = -1)] / sigma_hat)
         }
       }
       # MA model
       if(p == 0 && q >= 1){
         for(ii in (r+1):N){
-          a_bip[ii] <- x[ii] + theta_hat %*% sigma_hat %*%Rrobustsp::eta(a_bip[seq.int(ii-1, ii-q, by = -1)] / sigma_hat)
+          a_bip[ii] <- x[ii] + (theta_hat * sigma_hat) %*% Rrobustsp::eta(a_bip[seq.int(ii-1, ii-q, by = -1)] / sigma_hat)
         }
       }
       # AR model
@@ -151,6 +162,12 @@ bip_resid <- function(x, beta_hat, p, q){
   return(a_bip)
 }
 
+#' bip_s_resid
+#'
+#' @note
+#' file in dependentData_Auxiliary_armaResid.R
+#'
+#' @export
 bip_s_resid <- function(x, beta_hat, p, q){
   # phi_hat := AR coefficients
   if(0 < p){phi_hat <- beta_hat[1:p]} else phi_hat <- numeric(0)
@@ -190,13 +207,13 @@ bip_s_resid <- function(x, beta_hat, p, q){
           # ARMA residuals
           a_bip[ii] <- x[ii] - phi_hat %*% (x[seq.int(ii-1, ii-p, by = -1)] - a_bip[seq.int(ii-1, ii-p, by = -1)] +
                                               sigma_hat * Rrobustsp::eta(a_bip[seq.int(ii-1, ii-p, by = -1)]/sigma_hat)) +
-            theta_hat %*% sigma_hat %*% Rrobustsp::eta(a_bip[seq.int(ii-1, ii-q, by = -1)] / sigma_hat)
+            (theta_hat * sigma_hat) %*% Rrobustsp::eta(a_bip[seq.int(ii-1, ii-q, by = -1)] / sigma_hat)
         }
       }
       # MA model
       if(p == 0 && q >= 1){
         for(ii in (r+1):N){
-          a_bip[ii] <- x[ii] + theta_hat %*% sigma_hat %*% Rrobustsp::eta(a_bip[seq.int(ii-1, ii-q, by = -1)] / sigma_hat)
+          a_bip[ii] <- x[ii] + (theta_hat * sigma_hat) %*% Rrobustsp::eta(a_bip[seq.int(ii-1, ii-q, by = -1)] / sigma_hat)
         }
       }
       # AR model
@@ -220,6 +237,12 @@ bip_s_resid <- function(x, beta_hat, p, q){
   }
 }
 
+#' bip_s_resid_sc
+#'
+#' @note
+#' file in dependentData_Auxiliary_armaResid.R
+#'
+#' @export
 bip_s_resid_sc <- function(x, beta_hat, p, q){
   # phi_hat := AR coefficients
   if(0 < p){phi_hat <- beta_hat[1:p]} else phi_hat <- 0
@@ -260,13 +283,13 @@ bip_s_resid_sc <- function(x, beta_hat, p, q){
           # ARMA residuals
           a_bip[ii] <- x[ii] - phi_hat %*% (x[seq.int(ii-1, ii-p, by = -1)] - a_bip[seq.int(ii-1, ii-p, by = -1)] +
                                               sigma_hat * Rrobustsp::eta(a_bip[seq.int(ii-1, ii-p, by = -1)]/sigma_hat)) +
-            theta_hat %*% sigma_hat %*% Rrobustsp::eta(a_bip[seq.int(ii-1, ii-q, by = -1)] / sigma_hat)
+            (theta_hat * sigma_hat) %*% Rrobustsp::eta(a_bip[seq.int(ii-1, ii-q, by = -1)] / sigma_hat)
         }
       }
       # MA model
       if(p == 0 && q >= 1){
         for(ii in (r+1):N){
-          a_bip[ii] <- x[ii] + theta_hat * sigma_hat %*% Rrobustsp::eta(a_bip[seq.int(ii-1, ii-q, by = -1)] / sigma_hat)
+          a_bip[ii] <- x[ii] + (theta_hat * sigma_hat) %*% Rrobustsp::eta(a_bip[seq.int(ii-1, ii-q, by = -1)] / sigma_hat)
         }
       }
       # AR model
@@ -295,6 +318,7 @@ bip_s_resid_sc <- function(x, beta_hat, p, q){
 #'
 #' @note
 #' In file dependentData_Auxiliary_armaResid
+#'
 #' @examples
 #' data("x_ao_mat")
 #'
