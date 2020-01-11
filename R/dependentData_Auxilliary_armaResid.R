@@ -1,7 +1,17 @@
 #' arma_s_resid
 #'
+#' Computes the residuals of S-estimates for an ARMA process
+#'
+#' @param x: numeric vector. The signal
+#' @param beta_hat: the AR and MA coefficients
+#' @param p: AR order
+#' @param q: MA order
+#'
+#' @return a: numeric vector of residuals
+#'
 #' @note
 #' File is in dependentData_Auxiliary_armaResid.R
+#'
 #'@export
 arma_s_resid <- function(x, beta_hat, p, q){
   # phi_hat := AR coefficients

@@ -6,10 +6,25 @@
 \usage{
 robust_starting_point(x, p, q, recursion_num = 0)
 }
+\arguments{
+\item{x:}{numeriv vector, the time series / signal}
+
+\item{p:}{AR order}
+
+\item{q:}{MA order}
+}
+\value{
+beta_inital: ARMA coefficient estimate
+
+cleaned_signal: cleaned signal
+}
 \description{
 The function  robust_starting_point(x,p,q) provides a
 robust initial estimate for robust ARMA parameter estimation
 based on BIP-AR(p_long) approximation.
 It also computes an outlier cleaned signal using BIP-AR(p_long)
 predictions
+}
+\examples{
+
 }

@@ -10,5 +10,8 @@ bip_resid(x, beta_hat, p, q)
 bip_resid
 }
 \note{
+File is in dependentData_Auxiliary_armaResid.R
+
 slightly different result than matlab
+File in dependentData_Auxiliary_armaResid
 }

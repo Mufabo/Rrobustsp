@@ -9,7 +9,8 @@
 #' @param q: moving-average order
 #' @param beta_hat_s: BIP S-estimate
 #' @param a_sc_final: M scale estimate of residuals of BIP S-estimate
-#'
+#' @param tolx: threshold value that is passed to pracma::lsqnonlin.
+#'              Default = 5e-7
 #' @return result: named list with following fields
 #'                 ar_coeffs : numeric vector of length p. BIP-AR(p) MM estimates
 #'                 ma_coeffs : numeric vector of length q. BIP-AR(q) MM estimates
@@ -29,6 +30,18 @@
 #'   Muma, M. and Zoubir, A.M.
 #'   IEEE Transactions on Signal Processing, 65(7), 1712-1727, 2017.
 #'
+#' @examples
+#'
+#' N <- 500
+#' a <- rnorm(N)
+#' p <- 1
+#' q <- 0
+#' x <- signal::filter(1, c(1, -0.8), a)
+#'
+#' arma_est_bip_mm(x, p, q)
+#' @note
+#'
+#' file is in dependentData_armaEstBipMM.R
 #'
 #' @export
 arma_est_bip_mm <- function(x, p, q, tolX = 5e-7){

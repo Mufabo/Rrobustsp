@@ -9,3 +9,6 @@ arma_tau_resid_sc(x, beta_hat, p, q)
 \description{
 arma_tau_resid_sc
 }
+\note{
+File is in dependentData_Auxiliary_armaResid.R
+}

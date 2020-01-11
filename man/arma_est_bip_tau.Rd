@@ -4,8 +4,42 @@
 \alias{arma_est_bip_tau}
 \title{arma_est_bip_tau}
 \usage{
-arma_est_bip_tau(x, p, q)
+arma_est_bip_tau(x, p, q, tolx = 5e-07)
+}
+\arguments{
+\item{x:}{numeric vector. The signal}
+
+\item{p:}{AR order}
+
+\item{q:}{MA order}
+
+\item{tolx:}{threshold value that is passed to pracma::lsqnonlin.
+Default = 5e-7}
+}
+\value{
+result: named list with following fields
+                ar_coeffs : numeric vector of length p. BIP-AR(p) tau estimates
+                ma_coeffs : numeric vector of length q. BIP-AR(q) tau estimates
+                inno_scale : numeric, BIP s-estimate of the innovations scale
+                ar_coeffs_init : numeric vector of length p. Robust starting point for estimation
+                ma_coeffs_init : numeric vector of length q. Robust starting point for estimation
 }
 \description{
-arma_est_bip_tau
+The function arma_est_bip_tau(x,p,q) comuptes BIP tau-estimates of the
+ARMA model parameters. It also computes an outlier
+cleaned signal using BIP-ARMA(p,q) predictions
+}
+\note{
+file is in dependentData_arma_Est_BipTau.R
+}
+\examples{
+
+N <- 500
+a <- rnorm(N)
+p <- 1
+q <- 0
+x <- signal::filter(1, c(1, -0.8), a)
+
+arma_est_bip_tau(x, p, q)
+
 }

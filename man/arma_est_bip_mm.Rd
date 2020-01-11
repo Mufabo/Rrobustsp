@@ -2,7 +2,7 @@
 % Please edit documentation in R/dependentData_armaEstBipMM.R
 \name{arma_est_bip_mm}
 \alias{arma_est_bip_mm}
-\title{arma_est_bip_m}
+\title{arma_est_bip_mm}
 \usage{
 arma_est_bip_mm(x, p, q, tolX = 5e-07)
 }
@@ -16,16 +16,35 @@ arma_est_bip_mm(x, p, q, tolX = 5e-07)
 \item{beta_hat_s:}{BIP S-estimate}
 
 \item{a_sc_final:}{M scale estimate of residuals of BIP S-estimate}
+
+\item{tolx:}{threshold value that is passed to pracma::lsqnonlin.
+Default = 5e-7}
 }
 \value{
-ar_coeffs: vector of BIP-AR(p) MM-estimates
-
-ma_coeffs: vector of BIP-MA(q) MM-estimates
+result: named list with following fields
+                ar_coeffs : numeric vector of length p. BIP-AR(p) MM estimates
+                ma_coeffs : numeric vector of length q. BIP-AR(q) MM estimates
+                inno_scale : numeric, BIP s-estimate of the innovations scale
+                ar_coeffs_init : numeric vector of length p. Robust starting point for estimation
+                ma_coeffs_init : numeric vector of length q. Robust starting point for estimation
 }
 \description{
-The function  arma_est_bip_m(x,p,q) comuptes the BIP M-estimation step for BIP MM estimates of the
- ARMA model parameters. It can also be used as a stand-alone
- M-estimator.
+The function  arma_est_bip_mm(x,p,q) comuptes BIP MM-estimates of the
+ARMA model parameters.
+It also computes an outlier cleaned signal using BIP-ARMA(p,q) predictions
+}
+\note{
+file is in dependentData_armaEstBipMM.R
+}
+\examples{
+
+N <- 500
+a <- rnorm(N)
+p <- 1
+q <- 0
+x <- signal::filter(1, c(1, -0.8), a)
+
+arma_est_bip_mm(x, p, q)
 }
 \references{
 "Robust Statistics for Signal Processing"

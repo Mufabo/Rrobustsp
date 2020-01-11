@@ -1,4 +1,23 @@
-
+#' Repeated Median filter
+#'
+#' Implementation of
+#'
+#'   "High breakdown methods of time series analysis.
+#'    Tatum, L.G., and Hurvich, C. M.
+#'    Journal of the Royal Statistical Society. Series B (Methodological),
+#'    pp. 881-896, 1993.
+#'
+#'@param x: numeric vector. The signal
+#'
+#'@return xFRM: Rpeated median filtered signal
+#'@return ARM: Fourier coefficients for cosine
+#'@return BRM: Fourier coefficients for sine
+#'
+#'@note
+#'file in SpectrumEstimation_repeated_median_filter.R
+#'
+#' Warning: Takes a long time
+#'@export
 repeated_median_filter <- function(x){
   N <- length(x)
   xFRM <- numeric(N)
