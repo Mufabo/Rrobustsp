@@ -12,21 +12,14 @@ arma_est_bip_mm(x, p, q, tolX = 5e-07)
 \item{p:}{autoregressive order}
 
 \item{q:}{moving-average order}
-
-\item{beta_hat_s:}{BIP S-estimate}
-
-\item{a_sc_final:}{M scale estimate of residuals of BIP S-estimate}
-
-\item{tolx:}{threshold value that is passed to pracma::lsqnonlin.
-Default = 5e-7}
 }
 \value{
 result: named list with following fields
-                ar_coeffs : numeric vector of length p. BIP-AR(p) MM estimates
-                ma_coeffs : numeric vector of length q. BIP-AR(q) MM estimates
-                inno_scale : numeric, BIP s-estimate of the innovations scale
-                ar_coeffs_init : numeric vector of length p. Robust starting point for estimation
-                ma_coeffs_init : numeric vector of length q. Robust starting point for estimation
+                \item{ar_coeffs}{numeric vector of length p. BIP-AR(p) MM estimates}
+                \item{ma_coeffs}{numeric vector of length q. BIP-AR(q) MM estimates}
+                \item{inno_scale}{numeric, BIP s-estimate of the innovations scale}
+                \item{ar_coeffs_init}{numeric vector of length p. Robust starting point for estimation}
+                \item{ma_coeffs_init}{numeric vector of length q. Robust starting point for estimation}
 }
 \description{
 The function  arma_est_bip_mm(x,p,q) comuptes BIP MM-estimates of the
@@ -37,6 +30,7 @@ It also computes an outlier cleaned signal using BIP-ARMA(p,q) predictions
 file is in dependentData_armaEstBipMM.R
 }
 \examples{
+library(signal)
 
 N <- 500
 a <- rnorm(N)

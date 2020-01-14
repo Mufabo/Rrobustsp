@@ -25,6 +25,24 @@
 #'   Muma, M. and Zoubir, A.M.
 #'   IEEE Transactions on Signal Processing, 65(7), 1712-1727, 2017.
 #'
+#' @examples
+#' library(signal)
+#' library(zeallot)
+#' library(pracma)
+#'
+#' N <- 500
+#' a <- rnorm(N)
+#' p <- 1
+#' q <- 0
+#' x <- signal::filter(1, c(1, -0.8), a)
+#'
+#' beta_s <- arma_est_bip_s(x, p, q, tolX = 1e-8)
+#' beta <- c(beta_s$ar_coeffs, beta_s$ma_coeffs)
+#'
+#' arma_est_bip_m(x, p, q, beta, beta_s$inno_scale)
+#'@note
+#'
+#'File location: dependentData_armaEstBipM.R
 #'
 #' @export
 arma_est_bip_m <- function(x, p, q, beta_hat_s, a_sc_final){
@@ -50,9 +68,9 @@ arma_est_bip_m <- function(x, p, q, beta_hat_s, a_sc_final){
   if(a_rho2_mm < a_bip_rho2_mm) beta_hat <- beta_arma_mm
   else beta_hat <- beta_bip_mm
 
-  if(0 < p) phi_bip_mm <- - beta_hat[1:p]
+  if(0 < p) phi_bip_mm <- - beta_hat[1:p] else phi_bip_mm <- numeric(0)
 
-  if(0 < q) theta_bip_mm <- - beta_hat[(p+1):(p+q)]
+  if(0 < q) theta_bip_mm <- - beta_hat[(p+1):(p+q)] else theta_bip_mm <- numeric(0)
 
   return(list('ar_coeffs' = phi_bip_mm,
               'ma_coeffs' = theta_bip_mm))

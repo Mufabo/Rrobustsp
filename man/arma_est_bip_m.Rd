@@ -27,6 +27,25 @@ The function  arma_est_bip_m(x,p,q) comuptes the BIP M-estimation step for BIP M
  ARMA model parameters. It can also be used as a stand-alone
  M-estimator.
 }
+\note{
+File location: dependentData_armaEstBipM.R
+}
+\examples{
+library(signal)
+library(zeallot)
+library(pracma)
+
+N <- 500
+a <- rnorm(N)
+p <- 1
+q <- 0
+x <- signal::filter(1, c(1, -0.8), a)
+
+beta_s <- arma_est_bip_s(x, p, q, tolX = 1e-8)
+beta <- c(beta_s$ar_coeffs, beta_s$ma_coeffs)
+
+arma_est_bip_m(x, p, q, beta, beta_s$inno_scale)
+}
 \references{
 "Robust Statistics for Signal Processing"
   Zoubir, A.M. and Koivunen, V. and Ollila, E. and Muma, M.

@@ -2,10 +2,56 @@
 % Please edit documentation in R/dependentData_armaEstBipS.R
 \name{arma_est_bip_s}
 \alias{arma_est_bip_s}
-\title{arma_est_bip_s}
+\title{arma_est_bip_s
+The function  arma_est_bip_mm(x,p,q) comuptes BIP S-estimates of the
+ARMA model parameters.
+It also computes an outlier cleaned signal using BIP-ARMA(p,q) predictions}
 \usage{
 arma_est_bip_s(x, p, q, tolX = 0.01)
 }
+\arguments{
+\item{x:}{data (observations/measurements/signal)}
+
+\item{p:}{autoregressive order}
+
+\item{q:}{moving-average order}
+
+\item{tolX:}{numeric. Threshold passed to pracma::lsqnonlin. Default = 1e-2}
+}
+\value{
+result: named list with following fields
+                \item{ar_coeffs}{numeric vector of length p. BIP-AR(p) S estimates}
+                \item{ma_coeffs}{numeric vector of length q. BIP-AR(q) S estimates}
+                \item{inno_scale}{numeric, BIP s-estimate of the innovations scale}
+                \item{ar_coeffs_init}{numeric vector of length p. Robust starting point for estimation}
+                \item{ma_coeffs_init}{numeric vector of length q. Robust starting point for estimation}
+}
 \description{
 arma_est_bip_s
+The function  arma_est_bip_mm(x,p,q) comuptes BIP S-estimates of the
+ARMA model parameters.
+It also computes an outlier cleaned signal using BIP-ARMA(p,q) predictions
+}
+\note{
+file is in dependentData_armaEstBipS.R
+}
+\examples{
+library(signal)
+
+N <- 500
+a <- rnorm(N)
+p <- 1
+q <- 0
+x <- signal::filter(1, c(1, -0.8), a)
+
+arma_est_bip_s(x, p, q)
+}
+\references{
+"Robust Statistics for Signal Processing"
+  Zoubir, A.M. and Koivunen, V. and Ollila, E. and Muma, M.
+  Cambridge University Press, 2018.
+
+ "Bounded Influence Propagation $\tau$-Estimation: A New Robust Method for ARMA Model Estimation."
+  Muma, M. and Zoubir, A.M.
+  IEEE Transactions on Signal Processing, 65(7), 1712-1727, 2017.
 }

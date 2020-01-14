@@ -7,16 +7,13 @@
 #' @param x: data (observations/measurements/signal)
 #' @param p: autoregressive order
 #' @param q: moving-average order
-#' @param beta_hat_s: BIP S-estimate
-#' @param a_sc_final: M scale estimate of residuals of BIP S-estimate
-#' @param tolx: threshold value that is passed to pracma::lsqnonlin.
-#'              Default = 5e-7
+#'
 #' @return result: named list with following fields
-#'                 ar_coeffs : numeric vector of length p. BIP-AR(p) MM estimates
-#'                 ma_coeffs : numeric vector of length q. BIP-AR(q) MM estimates
-#'                 inno_scale : numeric, BIP s-estimate of the innovations scale
-#'                 ar_coeffs_init : numeric vector of length p. Robust starting point for estimation
-#'                 ma_coeffs_init : numeric vector of length q. Robust starting point for estimation
+#'                 \item{ar_coeffs}{numeric vector of length p. BIP-AR(p) MM estimates}
+#'                 \item{ma_coeffs}{numeric vector of length q. BIP-AR(q) MM estimates}
+#'                 \item{inno_scale}{numeric, BIP s-estimate of the innovations scale}
+#'                 \item{ar_coeffs_init}{numeric vector of length p. Robust starting point for estimation}
+#'                 \item{ma_coeffs_init}{numeric vector of length q. Robust starting point for estimation}
 #'
 #'
 #'
@@ -31,6 +28,7 @@
 #'   IEEE Transactions on Signal Processing, 65(7), 1712-1727, 2017.
 #'
 #' @examples
+#' library(signal)
 #'
 #' N <- 500
 #' a <- rnorm(N)

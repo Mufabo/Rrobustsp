@@ -1,16 +1,34 @@
+# arma_s_resid ----
 #' arma_s_resid
 #'
 #' Computes the residuals of S-estimates for an ARMA process
 #'
 #' @param x: numeric vector. The signal
-#' @param beta_hat: the AR and MA coefficients
+#' @param beta_hat: numeric vector, the AR and MA coefficients
 #' @param p: AR order
 #' @param q: MA order
 #'
-#' @return a: numeric vector of residuals
+#' @return a_sc: m-scale based on residuals.
 #'
 #' @note
 #' File is in dependentData_Auxiliary_armaResid.R
+#'
+#' @examples
+#'
+#' library(signal)
+#' library(zeallot)
+#' library(pracma)
+#'
+#' N <- 500
+#' a <- rnorm(N)
+#' p <- 1
+#' q <- 0
+#' x <- signal::filter(1, c(1, -0.8), a)
+#'
+#' beta_s <- arma_est_bip_s(x, p, q, tolX = 1e-8)
+#' beta <- c(beta_s$ar_coeffs, beta_s$ma_coeffs)
+#'
+#' arma_s_resid(x, beta, p, q)
 #'
 #'@export
 arma_s_resid <- function(x, beta_hat, p, q){
@@ -59,10 +77,37 @@ arma_s_resid <- function(x, beta_hat, p, q){
 }
 
 
+# arma_tau_resid_sc ----
 #' arma_tau_resid_sc
+#'
+#' @param x: numeric vector. The signal
+#' @param beta_hat: numeric vector, the AR and MA coefficients
+#' @param p: AR order
+#' @param q: MA order
+#'
+#'
+#' @return a: numeric vector of residuals
+#'
+#' @examples
+#'
+#' library(signal)
+#' library(zeallot)
+#' library(pracma)
+#'
+#' N <- 500
+#' a <- rnorm(N)
+#' p <- 1
+#' q <- 0
+#' x <- signal::filter(1, c(1, -0.8), a)
+#'
+#' beta_s <- arma_est_bip_s(x, p, q, tolX = 1e-8)
+#' beta <- c(beta_s$ar_coeffs, beta_s$ma_coeffs)
+#'
+#' arma_tau_resid_sc(x, beta, p, q)
 #'
 #' @note
 #' File is in dependentData_Auxiliary_armaResid.R
+#'
 #' @export
 arma_tau_resid_sc <- function(x, beta_hat, p, q){
   # phi_hat := AR coefficients
@@ -107,15 +152,33 @@ arma_tau_resid_sc <- function(x, beta_hat, p, q){
   return(a_sc)
 }
 
-#' bip_resid
+
+# bip_resid ----
+#' bounded influence propagation residuals
 #'
 #' @note
 #' File is in dependentData_Auxiliary_armaResid.R
 #'
 #' @note
-#' slightly different result than matlab
 #' File in dependentData_Auxiliary_armaResid
 #'
+#'
+#' @examples
+#'
+#' library(signal)
+#' library(zeallot)
+#' library(pracma)
+#'
+#' N <- 500
+#' a <- rnorm(N)
+#' p <- 1
+#' q <- 0
+#' x <- signal::filter(1, c(1, -0.8), a)
+#'
+#' beta_s <- arma_est_bip_s(x, p, q, tolX = 1e-8)
+#' beta <- c(beta_s$ar_coeffs, beta_s$ma_coeffs)
+#'
+#' bip_resid(x, beta, p, q)
 #' @export
 bip_resid <- function(x, beta_hat, p, q){
   # phi_hat := AR coefficients
@@ -172,11 +235,29 @@ bip_resid <- function(x, beta_hat, p, q){
   return(a_bip)
 }
 
+
+# bip_s_resid ----
 #' bip_s_resid
 #'
 #' @note
 #' file in dependentData_Auxiliary_armaResid.R
 #'
+#' @examples
+#'
+#' library(signal)
+#' library(zeallot)
+#' library(pracma)
+#'
+#' N <- 500
+#' a <- rnorm(N)
+#' p <- 1
+#' q <- 0
+#' x <- signal::filter(1, c(1, -0.8), a)
+#'
+#' beta_s <- arma_est_bip_s(x, p, q, tolX = 1e-8)
+#' beta <- c(beta_s$ar_coeffs, beta_s$ma_coeffs)
+#'
+#' bip_s_resid(x, beta, p, q)
 #' @export
 bip_s_resid <- function(x, beta_hat, p, q){
   # phi_hat := AR coefficients
@@ -247,22 +328,40 @@ bip_s_resid <- function(x, beta_hat, p, q){
   }
 }
 
+
+# bip_s_resid_sc ----
 #' bip_s_resid_sc
 #'
 #' @note
 #' file in dependentData_Auxiliary_armaResid.R
 #'
+#' @examples
+#'
+#' library(signal)
+#' library(zeallot)
+#' library(pracma)
+#'
+#' N <- 500
+#' a <- rnorm(N)
+#' p <- 1
+#' q <- 0
+#' x <- signal::filter(1, c(1, -0.8), a)
+#'
+#' beta_s <- arma_est_bip_s(x, p, q, tolX = 1e-8)
+#' beta <- c(beta_s$ar_coeffs, beta_s$ma_coeffs)
+#'
+#' bip_s_resid_sc(x, beta, p, q)
 #' @export
 bip_s_resid_sc <- function(x, beta_hat, p, q){
   # phi_hat := AR coefficients
-  if(0 < p){phi_hat <- beta_hat[1:p]} else phi_hat <- 0
-  if(0 < q){theta_hat <- beta_hat[(p+1):(p+q)]} else theta_hat <- 0
+  if(0 < p){phi_hat <- beta_hat[1:p]} else phi_hat <- numeric(0)
+  if(0 < q){theta_hat <- beta_hat[(p+1):(p+q)]} else theta_hat <- numeric(0)
 
   N <- length(x)
   r <- max(p, q)
 
   a_bip <- numeric(N)
-  x_sc <- tau_scale(x)
+  x_sc <- m_scale(x)
 
   kap2 <- 0.8724286 # kap=var(eta(randn(10000,1)));
 
@@ -272,7 +371,7 @@ bip_s_resid_sc <- function(x, beta_hat, p, q){
   }
   else{
     lamb <- ma_infinity(phi_hat, -theta_hat, 100) # MA infinity approximation to compute scale used in eta function
-    sigma_hat <- sqrt(x_sc^2/(1+kap2*sum(lamb^2))); # scale used in eta function
+    sigma_hat <- sqrt(x_sc^2/(1+kap2*sum(lamb^2))) # scale used in eta function
   }
 
 
@@ -324,6 +423,8 @@ bip_s_resid_sc <- function(x, beta_hat, p, q){
   }
 }
 
+
+# bip_tau_resid_sc ----
 #' bip_tau_resid_sc
 #'
 #' @note

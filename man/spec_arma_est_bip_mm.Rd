@@ -4,7 +4,7 @@
 \alias{spec_arma_est_bip_mm}
 \title{spec_arma_est_bip_mm}
 \usage{
-spec_arma_est_bip_mm(x, p, q)
+spec_arma_est_bip_mm(x, p, q, tolx = 5e-07)
 }
 \description{
 spec_arma_est_bip_mm

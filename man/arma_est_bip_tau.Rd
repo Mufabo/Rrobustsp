@@ -4,7 +4,7 @@
 \alias{arma_est_bip_tau}
 \title{arma_est_bip_tau}
 \usage{
-arma_est_bip_tau(x, p, q, tolx = 5e-07)
+arma_est_bip_tau(x, p, q, tolx = 1e-08)
 }
 \arguments{
 \item{x:}{numeric vector. The signal}
@@ -14,15 +14,15 @@ arma_est_bip_tau(x, p, q, tolx = 5e-07)
 \item{q:}{MA order}
 
 \item{tolx:}{threshold value that is passed to pracma::lsqnonlin.
-Default = 5e-7}
+Default = 1e-8}
 }
 \value{
 result: named list with following fields
-                ar_coeffs : numeric vector of length p. BIP-AR(p) tau estimates
-                ma_coeffs : numeric vector of length q. BIP-AR(q) tau estimates
-                inno_scale : numeric, BIP s-estimate of the innovations scale
-                ar_coeffs_init : numeric vector of length p. Robust starting point for estimation
-                ma_coeffs_init : numeric vector of length q. Robust starting point for estimation
+                \item{ar_coeffs}{numeric vector of length p. BIP-AR(p) tau estimates}
+                \item{ma_coeffs}{numeric vector of length q. BIP-AR(q) tau estimates}
+                \item{inno_scale}{numeric, BIP s-estimate of the innovations scale}
+                \item{ar_coeffs_init}{numeric vector of length p. Robust starting point for estimation}
+                \item{ma_coeffs_init}{numeric vector of length q. Robust starting point for estimation}
 }
 \description{
 The function arma_est_bip_tau(x,p,q) comuptes BIP tau-estimates of the
@@ -34,6 +34,8 @@ file is in dependentData_arma_Est_BipTau.R
 }
 \examples{
 
+library(signal)
+
 N <- 500
 a <- rnorm(N)
 p <- 1
@@ -42,4 +44,13 @@ x <- signal::filter(1, c(1, -0.8), a)
 
 arma_est_bip_tau(x, p, q)
 
+}
+\references{
+"Robust Statistics for Signal Processing"
+  Zoubir, A.M. and Koivunen, V. and Ollila, E. and Muma, M.
+  Cambridge University Press, 2018.
+
+ "Bounded Influence Propagation $\tau$-Estimation: A New Robust Method for ARMA Model Estimation."
+  Muma, M. and Zoubir, A.M.
+  IEEE Transactions on Signal Processing, 65(7), 1712-1727, 2017.
 }

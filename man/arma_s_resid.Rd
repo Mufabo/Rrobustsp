@@ -9,7 +9,7 @@ arma_s_resid(x, beta_hat, p, q)
 \arguments{
 \item{x:}{numeric vector. The signal}
 
-\item{beta_hat:}{the AR and MA coefficients}
+\item{beta_hat:}{numeric vector, the AR and MA coefficients}
 
 \item{p:}{AR order}
 
@@ -23,4 +23,22 @@ Computes the residuals of S-estimates for an ARMA process
 }
 \note{
 File is in dependentData_Auxiliary_armaResid.R
+}
+\examples{
+
+library(signal)
+library(zeallot)
+library(pracma)
+
+N <- 500
+a <- rnorm(N)
+p <- 1
+q <- 0
+x <- signal::filter(1, c(1, -0.8), a)
+
+beta_s <- arma_est_bip_s(x, p, q, tolX = 1e-8)
+beta <- c(beta_s$ar_coeffs, beta_s$ma_coeffs)
+
+arma_s_resid(x, beta, p, q)
+
 }

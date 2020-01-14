@@ -14,6 +14,9 @@ eta(x, c = 1)
 \description{
 eta
 }
+\note{
+file location : dependentData_Auxilliary.R
+}
 \examples{
 library(Rrobustsp)
 

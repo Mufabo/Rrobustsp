@@ -1,4 +1,3 @@
-
 #' eta
 #'
 #' @param x: numeric vector, the signal
@@ -9,6 +8,10 @@
 #'
 #' x <- rnorm(5)
 #' eta(x)
+#'
+#' @note
+#'
+#' file location : dependentData_Auxilliary.R
 #'
 #' @export
 eta <- function(x, c = 1){
