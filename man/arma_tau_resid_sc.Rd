@@ -6,9 +6,39 @@
 \usage{
 arma_tau_resid_sc(x, beta_hat, p, q)
 }
+\arguments{
+\item{x:}{numeric vector. The signal}
+
+\item{beta_hat:}{numeric vector, the AR and MA coefficients}
+
+\item{p:}{AR order}
+
+\item{q:}{MA order}
+}
+\value{
+a: numeric vector of residuals
+}
 \description{
 arma_tau_resid_sc
 }
 \note{
 File is in dependentData_Auxiliary_armaResid.R
+}
+\examples{
+
+library(signal)
+library(zeallot)
+library(pracma)
+
+N <- 500
+a <- rnorm(N)
+p <- 1
+q <- 0
+x <- signal::filter(1, c(1, -0.8), a)
+
+beta_s <- arma_est_bip_s(x, p, q, tolX = 1e-8)
+beta <- c(beta_s$ar_coeffs, beta_s$ma_coeffs)
+
+arma_tau_resid_sc(x, beta, p, q)
+
 }

@@ -2,30 +2,49 @@
 % Please edit documentation in R/Regression.R
 \name{hublasso}
 \alias{hublasso}
-\title{hublasso computes the M-Lasso estimate for a given penalty parameter
-  using Huber's loss function}
+\title{Lasso with Huber's loss function}
 \usage{
 hublasso(y, X, c = NULL, lambda, b0, sig0, reltol = 1e-05,
   printitn = 0, iter_max = 500)
 }
-\description{
-@param       y: Numeric data vector of size N x 1 (output,respones)
-  @param       X: Numeric data matrix of size N x p (inputs,predictors,features).
-            Each row represents one observation, and each column represents
-            one predictor
-}
-\details{
-@param  lambda: positive penalty parameter value
-  @param      b0: numeric initial start of the regression vector
-  @param    sig0: numeric positive scalar, initial scale estimate.
-  @param  c: Threshold constant of Huber's loss function
-  @param  reltol: Convergence threshold. Terminate when successive
-            estimates differ in L2 norm by a rel. amount less than reltol.
-            Default is 1.0e-5
-  @param  iter_max: int, default = 500. maximum number of iterations
-  @param  printitn: print iteration number (default = 0, no printing)
+\arguments{
+\item{y:}{Numeric data vector of size N x 1 (output,respones)}
 
-@return        b0: regression coefficient vector estimate
-  @return     sig0: estimate of the scale
-  @return   psires: pseudoresiduals
+\item{X:}{Numeric data matrix of size N x p (inputs,predictors,features).
+Each row represents one observation, and each column represents
+one predictor}
+
+\item{lambda:}{positive penalty parameter value}
+
+\item{b0:}{numeric initial start of the regression vector}
+
+\item{sig0:}{numeric positive scalar, initial scale estimate.}
+
+\item{c:}{Threshold constant of Huber's loss function}
+
+\item{reltol:}{Convergence threshold. Terminate when successive
+estimates differ in L2 norm by a rel. amount less than reltol.
+Default is 1.0e-5}
+
+\item{iter_max:}{int, default = 500. maximum number of iterations}
+
+\item{printitn:}{print iteration number (default = 0, no printing)}
+}
+\value{
+b0: regression coefficient vector estimate
+
+sig0: estimate of the scale
+
+psires: pseudoresiduals
+}
+\description{
+hublasso computes the M-Lasso estimate for a given penalty parameter
+using Huber's loss function
+}
+\note{
+File in Regression.R
+}
+\examples{
+hublasso(rnorm(5), matrix(rnorm(5)), lambda = 0.5, b0 = rnorm(5), sig0 = 0.3)
+
 }

@@ -16,7 +16,7 @@ arma_s_resid(x, beta_hat, p, q)
 \item{q:}{MA order}
 }
 \value{
-a: numeric vector of residuals
+a_sc: m-scale based on residuals.
 }
 \description{
 Computes the residuals of S-estimates for an ARMA process

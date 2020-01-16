@@ -2,16 +2,32 @@
 % Please edit documentation in R/dependentData_Auxilliary_armaResid.R
 \name{bip_resid}
 \alias{bip_resid}
-\title{bip_resid}
+\title{bounded influence propagation residuals}
 \usage{
 bip_resid(x, beta_hat, p, q)
 }
 \description{
-bip_resid
+bounded influence propagation residuals
 }
 \note{
 File is in dependentData_Auxiliary_armaResid.R
 
-slightly different result than matlab
 File in dependentData_Auxiliary_armaResid
+}
+\examples{
+
+library(signal)
+library(zeallot)
+library(pracma)
+
+N <- 500
+a <- rnorm(N)
+p <- 1
+q <- 0
+x <- signal::filter(1, c(1, -0.8), a)
+
+beta_s <- arma_est_bip_s(x, p, q, tolX = 1e-8)
+beta <- c(beta_s$ar_coeffs, beta_s$ma_coeffs)
+
+bip_resid(x, beta, p, q)
 }

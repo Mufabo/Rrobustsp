@@ -7,7 +7,7 @@
 ladreg(y, X, intcpt = T, b0 = NULL, printitn = 0)
 }
 \arguments{
-\item{y:}{numeric response N x 1 vector (real/complex)}
+\item{y:}{numeric response N vector (real/complex)}
 
 \item{X:}{numeric feature  N x p matrix (real/complex)}
 
@@ -27,6 +27,9 @@ iter: (numeric) # of iterations (given when IRWLS algorithm is used)
 \description{
 ladreg computes the LAD regression estimate
 }
+\note{
+file location: Regression.R
+}
 \examples{
-
+ladreg(rnorm(5), matrix(rnorm(5)))
 }

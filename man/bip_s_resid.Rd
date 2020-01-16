@@ -12,3 +12,20 @@ bip_s_resid
 \note{
 file in dependentData_Auxiliary_armaResid.R
 }
+\examples{
+
+library(signal)
+library(zeallot)
+library(pracma)
+
+N <- 500
+a <- rnorm(N)
+p <- 1
+q <- 0
+x <- signal::filter(1, c(1, -0.8), a)
+
+beta_s <- arma_est_bip_s(x, p, q, tolX = 1e-8)
+beta <- c(beta_s$ar_coeffs, beta_s$ma_coeffs)
+
+bip_s_resid(x, beta, p, q)
+}

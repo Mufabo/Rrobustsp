@@ -2,34 +2,53 @@
 % Please edit documentation in R/Regression.R
 \name{enetpath}
 \alias{enetpath}
-\title{enetpath
- [B, lamgrid, BIC, MSE] = enetpath(y, X,...)
- enethpath computes the elastic net (EN) regularization path (over grid
-of penalty parameter values). Uses pathwise CCD algorithm.}
+\title{enetpath}
 \usage{
 enetpath(y, X, alpha = 1, L = 100, eps = 1e-04, intcpt = TRUE,
   printitn = 0)
 }
-\description{
-@param       y : Numeric data vector of size N x 1 (output, respones)
- @param     X : Nnumeric data matrix of size N x p. Each row represents one
-         observation, and each column represents one predictor (feature).
- @param intcpt: Logical flag to indicate if intercept is in the model
- @param alpha  : Numeric scalar, elastic net tuning parameter in the range [0,1].
-           If not given then use alpha = 1 (Lasso)
-  @param    eps: Positive scalar, the ratio of the smallest to the
-          largest Lambda value in the grid. Default is eps = 10^-4.
-  @param     L : Positive integer, the number of lambda values EN/Lasso uses.
-           Default is L=100.
- @param printitn: print iteration number (default = 0, no printing)
+\arguments{
+\item{y}{: Numeric data vector of size N x 1 (output, respones)}
+
+\item{X}{: Nnumeric data matrix of size N x p. Each row represents one
+observation, and each column represents one predictor (feature).}
+
+\item{alpha}{: Numeric scalar, elastic net tuning parameter in the range [0,1].
+If not given then use alpha = 1 (Lasso)}
+
+\item{L}{: Positive integer, the number of lambda values EN/Lasso uses.
+Default is L=100.}
+
+\item{intcpt:}{Logical flag to indicate if intercept is in the model.
+Default = True}
+
+\item{eps:}{Positive scalar, the ratio of the smallest to the
+largest Lambda value in the grid. Default is eps = 10^-4.}
+
+\item{printitn:}{print iteration number (default = 0, no printing)}
 }
-\details{
-@return    B    : Fitted EN/Lasso regression coefficients, a p-by-(L+1) matrix,
+\value{
+B    : Fitted EN/Lasso regression coefficients, a p-by-(L+1) matrix,
           where p is the number of predictors (columns) in X, and L is
           the  number of Lambda values. If intercept is in the model, then
           B is (p+1)-by-(L+1) matrix, with first element the intercept.
- @return stats  : structure with following fields:
-             Lambda = lambda parameters in ascending order
-           MSE = Mean squared error (MSE)
-           BIC = Bayesian information criterion values for each lambda
+
+stats  : list with following fields:
+             \item{Lambda}{lambda parameters in ascending order}
+           \item{MSE}{Mean squared error (MSE)}
+           \item{BIC}{Bayesian information criterion values for each lambda}
+}
+\description{
+enethpath computes the elastic net (EN) regularization path (over grid
+of penalty parameter values). Uses pathwise CCD algorithm.
+}
+\note{
+file in Regression.R
+}
+\examples{
+y <- c(0.5377   , 1.8339   ,-2.2588 ,   0.8622,    0.3188)
+x <- c(-1.3077  , -0.4336,    0.3426   , 3.5784,    2.7694)
+
+enetpath(y, matrix(c(x, x), nrow = 5, ncol = 2))
+
 }

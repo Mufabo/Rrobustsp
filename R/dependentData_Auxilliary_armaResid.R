@@ -1,4 +1,5 @@
 # arma_s_resid ----
+
 #' arma_s_resid
 #'
 #' Computes the residuals of S-estimates for an ARMA process
@@ -425,7 +426,18 @@ bip_s_resid_sc <- function(x, beta_hat, p, q){
 
 
 # bip_tau_resid_sc ----
+
 #' bip_tau_resid_sc
+#'
+#' Computes the tau-estimate residual scale
+#'
+#' @param x : numeric vector. The signal
+#' @param beta_hat : ARMA parameter estimates
+#' @param p : AR order
+#' @param q : MA order
+#'
+#' @return scale : the tau estimate residual scale
+#' @return filtered_signal : Filtered signal
 #'
 #' @note
 #' In file dependentData_Auxiliary_armaResid

@@ -6,8 +6,22 @@
 \usage{
 bip_tau_resid_sc(x, beta_hat, p, q)
 }
+\arguments{
+\item{x}{: numeric vector. The signal}
+
+\item{beta_hat}{: ARMA parameter estimates}
+
+\item{p}{: AR order}
+
+\item{q}{: MA order}
+}
+\value{
+scale : the tau estimate residual scale
+
+filtered_signal : Filtered signal
+}
 \description{
-bip_tau_resid_sc
+Computes the tau-estimate residual scale
 }
 \note{
 In file dependentData_Auxiliary_armaResid

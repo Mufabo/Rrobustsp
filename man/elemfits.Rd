@@ -2,11 +2,7 @@
 % Please edit documentation in R/Regression.R
 \name{elemfits}
 \alias{elemfits}
-\title{[beta, w] = elemfits(x,y)
-  elemfits compute the Nx(N-1)/2 elemental fits, i.e., intercepts b_{0,ij}
-  and slopes b_{1,ij}, that define a line y = b_0+b_1 x that passes through
-  the data points (x_i,y_i) and (x_j,y_j), i<j, where i, j in {1, ..., N}.
-  and the respective weights | x_i - x_j |}
+\title{elemental fits}
 \usage{
 elemfits(y, x)
 }
@@ -21,9 +17,19 @@ beta: (numeric) N*(N-1)/2 matrix of elemental fits
 w: (numeric) N*(N-1)/2 matrix of weights
 }
 \description{
-[beta, w] = elemfits(x,y)
-  elemfits compute the Nx(N-1)/2 elemental fits, i.e., intercepts b_{0,ij}
-  and slopes b_{1,ij}, that define a line y = b_0+b_1 x that passes through
-  the data points (x_i,y_i) and (x_j,y_j), i<j, where i, j in {1, ..., N}.
-  and the respective weights | x_i - x_j |
+elemfits compute the Nx(N-1)/2 elemental fits, i.e., intercepts b_{0,ij}
+and slopes b_{1,ij}, that define a line y = b_0+b_1 x that passes through
+the data points (x_i,y_i) and (x_j,y_j), i<j, where i, j in {1, ..., N}.
+and the respective weights | x_i - x_j |
+}
+\note{
+File located in Regression.R
+}
+\examples{
+
+y <- c(0.5377   , 1.8339   ,-2.2588 ,   0.8622,    0.3188)
+x <- c(-1.3077  , -0.4336,    0.3426   , 3.5784,    2.7694)
+
+elemfits(y, x)
+
 }

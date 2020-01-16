@@ -50,7 +50,7 @@ arma_est_bip_tau(x, p, q)
   Zoubir, A.M. and Koivunen, V. and Ollila, E. and Muma, M.
   Cambridge University Press, 2018.
 
- "Bounded Influence Propagation $\tau$-Estimation: A New Robust Method for ARMA Model Estimation."
+ "Bounded Influence Propagation \eqn{\tau}-Estimation: A New Robust Method for ARMA Model Estimation."
   Muma, M. and Zoubir, A.M.
   IEEE Transactions on Signal Processing, 65(7), 1712-1727, 2017.
 }

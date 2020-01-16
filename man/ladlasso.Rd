@@ -39,3 +39,9 @@ or real-valued data.  If number of predictors, p, is larger than one,
 then IRWLS algorithm is used, otherwise a weighted median algorithm
 (N > 200) or elemental fits (N<200).
 }
+\note{
+File location: regression_ladlasso.R
+}
+\examples{
+
+}

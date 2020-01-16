@@ -43,3 +43,10 @@ stats  : structure with following fields:
 ladlassopath computes the LAD-Lasso regularization path (over grid
                                                           of penalty parameter values). Uses IRWLS algorithm.
 }
+\note{
+File in Regression.R
+}
+\examples{
+ladlassopath(rnorm(5), matrix(rnorm(5)))
+
+}

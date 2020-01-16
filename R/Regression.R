@@ -1,16 +1,28 @@
 # elemfits ----
 
-#'   [beta, w] = elemfits(x,y)
-#'   elemfits compute the Nx(N-1)/2 elemental fits, i.e., intercepts b_{0,ij}
-#'   and slopes b_{1,ij}, that define a line y = b_0+b_1 x that passes through
-#'   the data points (x_i,y_i) and (x_j,y_j), i<j, where i, j in {1, ..., N}.
-#'   and the respective weights | x_i - x_j |
+#'elemental fits
+#'
+#'elemfits compute the Nx(N-1)/2 elemental fits, i.e., intercepts b_{0,ij}
+#'and slopes b_{1,ij}, that define a line y = b_0+b_1 x that passes through
+#'the data points (x_i,y_i) and (x_j,y_j), i<j, where i, j in {1, ..., N}.
+#'and the respective weights | x_i - x_j |
 #'
 #'@param   y : (numeric) N  vector of real-valued outputs (response vector)
 #'@param   x : (numeric) N  vector of inputs (feature vector)
 #'
 #'@return    beta: (numeric) N*(N-1)/2 matrix of elemental fits
 #'@return   w: (numeric) N*(N-1)/2 matrix of weights
+#'
+#'@examples
+#'
+#'y <- c(0.5377   , 1.8339   ,-2.2588 ,   0.8622,    0.3188)
+#'x <- c(-1.3077  , -0.4336,    0.3426   , 3.5784,    2.7694)
+#'
+#'elemfits(y, x)
+#'
+#'@note
+#'File located in Regression.R
+#'
 #'@export
 elemfits <- function(y, x){
   N <- length(x)
@@ -31,31 +43,40 @@ elemfits <- function(y, x){
 # enetpath ----
 
 #' enetpath
-#'  [B, lamgrid, BIC, MSE] = enetpath(y, X,...)
-#'  enethpath computes the elastic net (EN) regularization path (over grid
+#'
+#' enethpath computes the elastic net (EN) regularization path (over grid
 #' of penalty parameter values). Uses pathwise CCD algorithm.
 #'
-#'  @param       y : Numeric data vector of size N x 1 (output, respones)
-#'  @param     X : Nnumeric data matrix of size N x p. Each row represents one
+#'@param       y : Numeric data vector of size N x 1 (output, respones)
+#'@param     X : Nnumeric data matrix of size N x p. Each row represents one
 #'          observation, and each column represents one predictor (feature).
-#'  @param intcpt: Logical flag to indicate if intercept is in the model
-#'  @param alpha  : Numeric scalar, elastic net tuning parameter in the range [0,1].
+#'@param intcpt: Logical flag to indicate if intercept is in the model.
+#'               Default = True
+#'@param alpha  : Numeric scalar, elastic net tuning parameter in the range [0,1].
 #'            If not given then use alpha = 1 (Lasso)
-#'   @param    eps: Positive scalar, the ratio of the smallest to the
+#'@param    eps: Positive scalar, the ratio of the smallest to the
 #'           largest Lambda value in the grid. Default is eps = 10^-4.
-#'   @param     L : Positive integer, the number of lambda values EN/Lasso uses.
+#'@param     L : Positive integer, the number of lambda values EN/Lasso uses.
 #'            Default is L=100.
-#'  @param printitn: print iteration number (default = 0, no printing)
+#'@param printitn: print iteration number (default = 0, no printing)
 #'
-#'  @return    B    : Fitted EN/Lasso regression coefficients, a p-by-(L+1) matrix,
+#'@return    B    : Fitted EN/Lasso regression coefficients, a p-by-(L+1) matrix,
 #'           where p is the number of predictors (columns) in X, and L is
 #'           the  number of Lambda values. If intercept is in the model, then
 #'           B is (p+1)-by-(L+1) matrix, with first element the intercept.
-#'  @return stats  : structure with following fields:
-#'              Lambda = lambda parameters in ascending order
-#'            MSE = Mean squared error (MSE)
-#'            BIC = Bayesian information criterion values for each lambda
-#' @export
+#'@return stats  : list with following fields:
+#'              \item{Lambda}{lambda parameters in ascending order}
+#'            \item{MSE}{Mean squared error (MSE)}
+#'            \item{BIC}{Bayesian information criterion values for each lambda}
+#'@examples
+#'y <- c(0.5377   , 1.8339   ,-2.2588 ,   0.8622,    0.3188)
+#'x <- c(-1.3077  , -0.4336,    0.3426   , 3.5784,    2.7694)
+#'
+#'enetpath(y, matrix(c(x, x), nrow = 5, ncol = 2))
+#'
+#'@note
+#'file in Regression.R
+#'@export
 enetpath <- function(y, X, alpha=1,  L=100, eps=1e-4, intcpt=TRUE, printitn=0){
   # TODO check for valid arguments
 
@@ -115,27 +136,37 @@ enetpath <- function(y, X, alpha=1,  L=100, eps=1e-4, intcpt=TRUE, printitn=0){
 
 # hublasso ----
 
-#'   hublasso computes the M-Lasso estimate for a given penalty parameter
-#'   using Huber's loss function
+#'Lasso with Huber's loss function
 #'
-#'   @param       y: Numeric data vector of size N x 1 (output,respones)
-#'   @param       X: Numeric data matrix of size N x p (inputs,predictors,features).
+#'hublasso computes the M-Lasso estimate for a given penalty parameter
+#'using Huber's loss function
+#'
+#'@param       y: Numeric data vector of size N x 1 (output,respones)
+#'@param       X: Numeric data matrix of size N x p (inputs,predictors,features).
 #'             Each row represents one observation, and each column represents
 #'             one predictor
 #'
-#'   @param  lambda: positive penalty parameter value
-#'   @param      b0: numeric initial start of the regression vector
-#'   @param    sig0: numeric positive scalar, initial scale estimate.
-#'   @param  c: Threshold constant of Huber's loss function
-#'   @param  reltol: Convergence threshold. Terminate when successive
+#'@param  lambda: positive penalty parameter value
+#'@param      b0: numeric initial start of the regression vector
+#'@param    sig0: numeric positive scalar, initial scale estimate.
+#'@param  c: Threshold constant of Huber's loss function
+#'@param  reltol: Convergence threshold. Terminate when successive
 #'             estimates differ in L2 norm by a rel. amount less than reltol.
 #'             Default is 1.0e-5
-#'   @param  iter_max: int, default = 500. maximum number of iterations
-#'   @param  printitn: print iteration number (default = 0, no printing)
+#'@param  iter_max: int, default = 500. maximum number of iterations
+#'@param  printitn: print iteration number (default = 0, no printing)
 #'
-#'   @return        b0: regression coefficient vector estimate
-#'   @return     sig0: estimate of the scale
-#'   @return   psires: pseudoresiduals
+#'@return        b0: regression coefficient vector estimate
+#'@return     sig0: estimate of the scale
+#'@return   psires: pseudoresiduals
+#'
+#'@examples
+#'hublasso(rnorm(5), matrix(rnorm(5)), lambda = 0.5, b0 = rnorm(5), sig0 = 0.3)
+#'
+#'@note
+#'
+#'File in Regression.R
+#'
 #' @export
 hublasso <- function(y, X, c = NULL, lambda, b0,  sig0, reltol = 1e-5, printitn = 0, iter_max = 500){
   n <- nrow(X)
@@ -207,7 +238,7 @@ hublasso <- function(y, X, c = NULL, lambda, b0,  sig0, reltol = 1e-5, printitn 
             lambda,iter, norm(fpeq, type = "2"),sig1-norm(psires, type = "2")/con)
   }
 
-  return (list(b0, sig0, psires))
+  return (list('b0' = b0,'sig0' = sig0, 'psires' = psires))
 }
 
 
@@ -244,6 +275,12 @@ hublasso <- function(y, X, c = NULL, lambda, b0,  sig0, reltol = 1e-5, printitn 
 #'            MeAD = Mean Absolute Deviation (MeAD) of the residuals
 #'            gBIC = generalized Bayesian information criterion (gBIC) value
 #'                  for each lambda parameter on the grid.
+#'@examples
+#'ladlassopath(rnorm(5), matrix(rnorm(5)))
+#'
+#' @note
+#' File in Regression.R
+#'
 #' @export
 ladlassopath <- function(y, X, L = 120, eps = 1e-3, intcpt = T, reltol = 1e-6, printitn = 0){
   n = nrow(X)
@@ -268,7 +305,7 @@ ladlassopath <- function(y, X, L = 120, eps = 1e-3, intcpt = T, reltol = 1e-6, p
 
   if(intcpt){
     B[rbind(rep(F, L+1), abs(B[2:nrow(B),]) < 1e-7)] <- 0
-    DF <- colSums(abs(B[2:nrow(B),]) != 0)
+    DF <- colSums(abs(B[2:nrow(B),,drop = F]) != 0)
     MeAD <- sqrt(pi / 2) * colMeans(abs(repmat(y, L+1) - cbind(rep(1, n), X) %*% B))
     const <- sqrt(n / (n - DF - 1))
   } else {
@@ -291,7 +328,7 @@ ladlassopath <- function(y, X, L = 120, eps = 1e-3, intcpt = T, reltol = 1e-6, p
 #'
 #' ladreg computes the LAD regression estimate
 #'
-#' @param          y: numeric response N x 1 vector (real/complex)
+#' @param          y: numeric response N vector (real/complex)
 #' @param        X: numeric feature  N x p matrix (real/complex)
 #' @param   intcpt: (logical) flag to indicate if intercept is in the model
 #' @param       b0: numeric optional initial start of the regression vector for
@@ -303,7 +340,9 @@ ladlassopath <- function(y, X, L = 120, eps = 1e-3, intcpt = T, reltol = 1e-6, p
 #' @return     iter: (numeric) # of iterations (given when IRWLS algorithm is used)
 #'
 #' @examples
-#'
+#'ladreg(rnorm(5), matrix(rnorm(5)))
+#'@note
+#'file location: Regression.R
 #' @export
 ladreg <- function(y, X, intcpt = T, b0 = NULL, printitn = 0){
   return(ladlasso(y, X, 0, intcpt, b0, printitn))
@@ -315,7 +354,7 @@ ladreg <- function(y, X, intcpt = T, b0 = NULL, printitn = 0){
 #' Mreg computes the M-estimates of regression using an auxiliary scale
 #' estimate. It uses the iterative reweighted least squares (IRWLS) algorithm
 #'
-#' @param        y : (numeric) data vector of size N x 1 (output, response vector)
+#' @param        y : (numeric) data vector of size N (output, response vector)
 #' @param      X : (numeric) data matrix of size N x p (input, feature matrix)
 #'           If the model has intercept, then first column of X should be a
 #'           vector of ones.
@@ -333,7 +372,7 @@ ladreg <- function(y, X, intcpt = T, b0 = NULL, printitn = 0){
 #' @export
 Mreg <- function(y, X, lossfun = 'huber', b0 = NULL, verbose = F){
 
-  if(is.null(b0)) b0 <- ladreg(y, X, F)
+  if(is.null(b0)) b0 <- ladreg(y, X, F)[[1]]
 
   # Compute the auxiliary scale estimate as
   if(is.complex(y)) const <- 1.20112 else const <- 1.4815
@@ -372,7 +411,7 @@ Mreg <- function(y, X, lossfun = 'huber', b0 = NULL, verbose = F){
     resid <- abs(y - X %*% b0)
   }
 
-  return(list(b1, sig))
+  return(list('b1' = b1, 'sig' = sig))
   }
 
 # rankflasso ----

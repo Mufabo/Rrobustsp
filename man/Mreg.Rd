@@ -8,7 +8,7 @@ estimate. It uses the iterative reweighted least squares (IRWLS) algorithm}
 Mreg(y, X, lossfun = "huber", b0 = NULL, verbose = F)
 }
 \arguments{
-\item{y}{: (numeric) data vector of size N x 1 (output, response vector)}
+\item{y}{: (numeric) data vector of size N (output, response vector)}
 
 \item{X}{: (numeric) data matrix of size N x p (input, feature matrix)
 If the model has intercept, then first column of X should be a

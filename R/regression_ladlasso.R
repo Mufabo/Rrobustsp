@@ -21,9 +21,13 @@
 #'
 #' @return b1 numeric, the regression coefficient vector of size N
 #' @return integr, iter number of iterations
-#' @export
 #'
 #' @examples
+#'
+#' @note
+#'
+#' File location: regression_ladlasso.R
+#' @export
 ladlasso <- function(y, X, lambda, intcpt = T, b0 = NULL, reltol = 1e-8, printitn = 0, iter_max = 2000){
   N <- nrow(X)
   p <- ncol(X)
