@@ -68,9 +68,9 @@ arma_est_bip_tau <- function(x, p, q, tolx = 1e-8){
   F <- function(beta) arma_tau_resid_sc(x, beta, p, q)
   F_bip <- function(beta) bip_tau_resid_sc(x, beta, p, q)[[1]]
 
-  beta_arma <- lsqnonlin(F, -beta_initial, options = list(tolx = tolx))$x
+  beta_arma <- lsqnonlin(F, beta_initial, options = list(tolx = tolx))$x
 
-  beta_bip <- lsqnonlin(F_bip, -beta_initial, options = list(tolx = tolx))$x
+  beta_bip <- lsqnonlin(F_bip, beta_initial, options = list(tolx = tolx))$x
 
   # innovations tau-scale for ARMA model
   a_sc <- arma_tau_resid_sc(x, beta_arma, p, q)[[1]]

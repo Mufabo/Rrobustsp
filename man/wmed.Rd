@@ -34,3 +34,8 @@ it solves the optimization problem:
 \details{
 beta = arg min_b  SUM_i | y_i - b | * w_i
 }
+\examples{
+wmed(1:5, c(1,0,1,2,3))
+wmed(1:5 +1i, c(1,0,1,2,3))
+
+}

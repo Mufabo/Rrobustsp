@@ -2,7 +2,7 @@
 split_into_prime <- function(y){
   N <- length(y)
 
-  data('prime_numbers')
+  data('prime_numbers', envir = environment())
 
   primes <- prime_numbers$prime.numbers
 

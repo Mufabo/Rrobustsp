@@ -32,3 +32,7 @@ sig: scale
 Mreg computes the M-estimates of regression using an auxiliary scale
 estimate. It uses the iterative reweighted least squares (IRWLS) algorithm
 }
+\examples{
+Mreg(1:5, matrix(-1:3))
+Mreg(1:5, matrix(-1:3), lossfun = 'tukey')
+}

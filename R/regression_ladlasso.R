@@ -44,8 +44,10 @@ ladlasso <- function(y, X, lambda, intcpt = T, b0 = NULL, reltol = 1e-8, printit
 
   # The case of only one predictor
   if(p == 1){
-    if(!intcpt) b1 <- wmed( rbind(y / X, 0), rbind(abs(X), lambda))
-    if(!is.complex(y) & N < 200 & intcpt){
+    if(!intcpt){
+      b1 <- wmed( rbind(y / X, 0), rbind(abs(X), lambda))
+      return( list('b1' = c(b1), 'iter' = iter))}
+    if(!is.complex(y) && N < 200 && intcpt){
       if(lambda == 0){
         b <- elemfits(X[,2], y) # b is a matrix
         b <- b[[1]]
@@ -92,7 +94,7 @@ ladlasso <- function(y, X, lambda, intcpt = T, b0 = NULL, reltol = 1e-8, printit
       b0 <- b1
     }}
 
-  return( list(c(b1), iter))
+  return( list('b1' = c(b1), 'iter' = iter))
 }
 
 # fRcpp ----

@@ -19,8 +19,13 @@ repmat <- function(v, s) matrix(v, nrow=length(v), ncol=s)
 #' sign that also works for complex numbers
 #' @export
 mat_sign <- function(x){
-  if(is.complex(x)) res <- x / abs(x) else res <- sign(x)
+  if(is.complex(x)){
+    res <- x
+    res[x != 0] <- x[x != 0] / abs(x[x != 0])
+    }
+  else res <- sign(x)
   return(res)
+
 }
 
 orth <- function(x){

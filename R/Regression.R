@@ -324,7 +324,7 @@ ladlassopath <- function(y, X, L = 120, eps = 1e-3, intcpt = T, reltol = 1e-6, p
 
 # ladreg ----
 
-#' ladrag
+#' ladreg
 #'
 #' ladreg computes the LAD regression estimate
 #'
@@ -369,10 +369,12 @@ ladreg <- function(y, X, intcpt = T, b0 = NULL, printitn = 0){
 #' @return sig: scale
 #'
 #' @examples
+#'Mreg(1:5, matrix(-1:3))
+#'Mreg(1:5, matrix(-1:3), lossfun = 'tukey')
 #' @export
 Mreg <- function(y, X, lossfun = 'huber', b0 = NULL, verbose = F){
 
-  if(is.null(b0)) b0 <- ladreg(y, X, F)[[1]]
+  if(is.null(b0)) b0 <- ladreg(y, X, F)$b1[[1]]
 
   # Compute the auxiliary scale estimate as
   if(is.complex(y)) const <- 1.20112 else const <- 1.4815
@@ -589,7 +591,7 @@ ranklasso <- function(y, X, lambda, b0 = NULL, printitn = F){
 #'
 #'computes the LAD regression estimate
 #'
-#' @param        y: numeric response N x 1 vector (real/complex)
+#' @param        y: numeric response N vector (real/complex)
 #' @param        X: numeric feature  N x p matrix (real/complex)
 #' @param       b0: numeric optional initial start of the regression vector for
 #'                  IRWLS algorithm. If not given, we use LSE (when p>1).
@@ -601,6 +603,11 @@ ranklasso <- function(y, X, lambda, b0 = NULL, printitn = F){
 #'
 #'
 #' @examples
+#' library(MASS)
+#' rladreg(1:5, matrix(-1:3))
+#' rladreg(1:5 +1i, matrix(-1:3))
+#' @note
+#' file location: Regression.R
 #' @export
 rladreg <- function(y, X, b0 = NULL, printitn = F){
   n <- nrow(X)
@@ -619,9 +626,9 @@ rladreg <- function(y, X, b0 = NULL, printitn = F){
   ytilde <- y[a] - y[b]
 
   if(p == 1){
-    b1 <- wmed(ytilde / Xtilde, abs(Xtilde))
+    b1 <- wmed(ytilde / Xtilde, abs(Xtilde))[[1]]
     iter <- NULL
-    return(list(b1, iter))
+    return(list('b1' = b1, 'iter' = iter))
   } else return(ladlasso(ytilde, Xtilde, 0, b0, printitn))
 }
 
@@ -647,7 +654,12 @@ rladreg <- function(y, X, b0 = NULL, printitn = F){
 #'@return beta: (numeric) weighted median
 #'@return converged: (logical) flag of convergence (in the complex-valued
 #'                                                         data case)
-#'@return       iter: (numeric) the number of iterations (complex-valued case)
+#'@return iter: (numeric) the number of iterations (complex-valued case)
+#'
+#'@examples
+#'wmed(1:5, c(1,0,1,2,3))
+#'wmed(1:5 +1i, c(1,0,1,2,3))
+#'
 #'@export
 wmed <- function(y, w, verbose = F, tol = 1e-7, iter_max = 2000){
   N <- length(y)
@@ -659,7 +671,7 @@ wmed <- function(y, w, verbose = F, tol = 1e-7, iter_max = 2000){
     for(iter in 1:iter_max){
       wy <- abs(y - beta0)
       wy[wy <= 1e-6] <- 1e-6
-      update <- colSums(w * (y - beta0)/(abs(y - beta0))) / colSums(w / wy)
+      update <- sum(w * mat_sign(y - beta0)) / sum(w / wy)
       beta <- beta0 + update
       delta <- abs(update) / abs0
       if(verbose & iter %% 10 == 0) sprintf('At iter = %3d, delta=%.8f\n',iter,delta)
@@ -667,8 +679,8 @@ wmed <- function(y, w, verbose = F, tol = 1e-7, iter_max = 2000){
 
       beta0 <- beta
       abs0 <- abs(beta)
-      if(iter == iter_max) converged <- F else converged <- T
     }# ends for loop
+    if(iter == iter_max) converged <- F else converged <- T
   } else{
     # real- value case
     tmp <- sort(y, index.return = T)
@@ -685,5 +697,5 @@ wmed <- function(y, w, verbose = F, tol = 1e-7, iter_max = 2000){
     converged <- NULL
   } # end real value case
 
-  return( list(beta, iter, converged))
+  return( list('beta' = beta, 'iter' = iter, 'converged' = converged))
 }

@@ -1,8 +1,5 @@
 '
-Updating Rrobustsp documentation
-Warnung: @examples [C:\Users\Computer\Documents\Rrobustsp\R\Regression.R#333]: requires a value
-Warnung: @examples [C:\Users\Computer\Documents\Rrobustsp\R\Regression.R#565]: requires a value
-Warnung: @examples [C:\Users\Computer\Documents\Rrobustsp\R\regression_ladlasso.R#27]: requires a value
+
 Undocumented arguments in documentation object arma_s_resid'
      'x' 'beta_hat' 'p' 'q'
    Documented arguments not in \usage in documentation object 'arma_s_resid':
@@ -150,19 +147,4 @@ Undocumented arguments in documentation object arma_s_resid'
 
    Undocumented arguments in documentation object 'sqrtm'
      'mat'
-
-     1: In tools::parse_Rd(path) :
-        C:/Users/Computer/Documents/Rrobustsp/man/ar_est_bip_s.Rd:35: unknown macro '\tau'
-     2: In tools::parse_Rd(path) :
-        C:/Users/Computer/Documents/Rrobustsp/man/ar_est_bip_tau.Rd:35: unknown macro '\tau'
-     3: In tools::parse_Rd(path) :
-        C:/Users/Computer/Documents/Rrobustsp/man/arma_est_bip_m.Rd:54: unknown macro '\tau'
-     4: In tools::parse_Rd(path) :
-        C:/Users/Computer/Documents/Rrobustsp/man/arma_est_bip_mm.Rd:48: unknown macro '\tau'
-     5: In tools::parse_Rd(path) :
-        C:/Users/Computer/Documents/Rrobustsp/man/arma_est_bip_s.Rd:54: unknown macro '\tau'
-     6: In tools::parse_Rd(path) :
-        C:/Users/Computer/Documents/Rrobustsp/man/arma_est_bip_tau.Rd:53: unknown macro '\tau'
-
-
 '

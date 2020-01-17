@@ -2,7 +2,7 @@
 % Please edit documentation in R/Regression.R
 \name{ladreg}
 \alias{ladreg}
-\title{ladrag}
+\title{ladreg}
 \usage{
 ladreg(y, X, intcpt = T, b0 = NULL, printitn = 0)
 }
