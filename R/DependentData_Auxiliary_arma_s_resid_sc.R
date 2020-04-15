@@ -1,3 +1,26 @@
+#' arma_s_resid_sc
+#'
+#' @param x : numeric vector. The signal
+#' @param beta_hat : Initial estimate of ARMA coefficients
+#' @param p : AR order
+#' @param q : MA order
+#'
+#' @return a_sc : scale estimate
+#'
+#' @examples
+#' data("x_ao_arma")
+#' arma_s_resid_sc(x_ao_arma, c(-.8, .5), 1, 1)
+#'
+#' library(signal)
+#' x <- rnorm(10)
+#' sig <- signal::filter(-.8, 1, x)
+#' arma_s_resid_sc(sig, c(-.8), 1, 0)
+#' @note
+#' File location : DependentData_Auxiliary_arma_s_resid_sc.R
+#'
+#' @export
+#' @importFrom pracma or
+#' @importFrom pracma roots
 arma_s_resid_sc <- function(x, beta_hat, p, q) {
   # phi_hat := AR coefficients
   if (0 < p) { phi_hat <- beta_hat[1:p]

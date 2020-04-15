@@ -30,10 +30,8 @@ The code is based on an implementation by Falco Strasser, Signal Processing
 Group, TU Darmstadt, October 2010.
 }
 \note{
+ATM takes forever
 File location: SpectrumEstimation_biweight_filter.R
-}
-\examples{
-
 }
 \references{
 "Robust Statistics for Signal Processing"

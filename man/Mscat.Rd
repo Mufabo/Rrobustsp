@@ -7,9 +7,9 @@
 Mscat(x, loss, losspar = NULL, invC = NULL, printitn = 0)
 }
 \arguments{
-\item{x}{: n x p matrix}
+\item{x:}{n x p matrix}
 
-\item{loss}{: 'Huber', 't_loss' or 'Tyler'}
+\item{loss:}{'Huber', 't_loss' or 'Tyler'}
 
 \item{losspar:}{parameter of the loss function: q in [0,1) for Huber and
 d.o.f. v >= 0 for t-loss. For Tyler you do not need to specify
@@ -39,6 +39,9 @@ using the loss function 'Huber' or 't-loss' and for a given parameter of
 the loss function (i.e., q for Huber's or degrees of freedom v for
 the t-distribution).
 }
+\note{
+File location : covariance_Mscat.R
+}
 \examples{
-
+Mscat(matrix(rnorm(15), 5, 3), loss = 'Huber')
 }

@@ -2,20 +2,26 @@
 % Please edit documentation in R/Location_Scale.R
 \name{MscaleTUK}
 \alias{MscaleTUK}
-\title{Mscale_TUK computes Tukey's M-estimate of
-  scale.}
+\title{Tukey's M-estimate of scale}
 \usage{
 MscaleTUK(y, c = 4.685, max_iters = 1000, tol_err = 1e-05)
 }
 \arguments{
-\item{y:}{real valued data vector of size N x 1}
+\item{y}{: real valued data vector of size N x 1}
 
-\item{c:}{tuning constant c>=0}
+\item{c}{: tuning constant c>=0. Default = 4.685}
 }
 \value{
-sigma_hat: Tukey's M-estimate of scale
+sigma_hat : Tukey's M-estimate of scale
 }
 \description{
 Mscale_TUK computes Tukey's M-estimate of
-  scale.
+scale.
+}
+\note{
+File location : Location_Scale.R
+}
+\examples{
+MscaleTUK(rnorm(5))
+
 }

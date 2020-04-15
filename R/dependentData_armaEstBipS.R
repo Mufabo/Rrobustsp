@@ -29,7 +29,7 @@
 #'
 #' @examples
 #' library(signal)
-#'
+#' library(pracma)
 #' N <- 500
 #' a <- rnorm(N)
 #' p <- 1
@@ -42,7 +42,14 @@
 #' file is in dependentData_armaEstBipS.R
 #'
 #' @export
+#' @importFrom stats mad
+#' @importFrom zeallot %<-%
+#' @importFrom pracma roots
+#' @importFrom utils head
 arma_est_bip_s <- function(x, p, q, tolX = 1e-2){
+  # to avoid no visible binding for global variable note
+  a_bip_sc <- x_filt <- NULL
+
   if(p == 0 && q == 0){
     result$inno_scale < m_scale(x)
     warning('Please choose a nonzero value for p or q')

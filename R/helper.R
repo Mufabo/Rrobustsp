@@ -11,13 +11,11 @@ sweep_sparse <- function(x, margin, stats, fun = "-") {
 
 #' repmat
 #'  matlab like repmat, vector v is replicate s times columnwise into a matrix
-#'@export
 repmat <- function(v, s) matrix(v, nrow=length(v), ncol=s)
 
 #' mat_sign
 #'
 #' sign that also works for complex numbers
-#' @export
 mat_sign <- function(x){
   if(is.complex(x)){
     res <- x
@@ -36,7 +34,6 @@ orth <- function(x){
 #'
 #' computes square root of matrix via Jordan Normal form
 #'
-#' @export
 sqrtm <- function(mat){
   X <- eigen(mat)
   T <- X$vectors
@@ -67,9 +64,9 @@ mat_stem <- function(x,y,pch=16,linecol=1,clinecol=1, ...){
   if (missing(y)){
     y = x
     x = 1:length(x) }
-  plot(x,y,pch=pch,...)
+  graphics::plot(x,y,pch=pch,...)
   for (i in 1:length(x)){
-    lines(c(x[i],x[i]), c(0,y[i]),col=linecol)
+    graphics::lines(c(x[i],x[i]), c(0,y[i]),col=linecol)
   }
-  lines(c(x[1]-2,x[length(x)]+2), c(0,0),col=clinecol)
+  graphics::lines(c(x[1]-2,x[length(x)]+2), c(0,0),col=clinecol)
 }

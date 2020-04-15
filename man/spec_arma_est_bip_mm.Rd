@@ -6,9 +6,36 @@
 \usage{
 spec_arma_est_bip_mm(x, p, q, tolx = 5e-07)
 }
+\arguments{
+\item{x:}{numeric vector. The data}
+
+\item{p:}{AR order}
+
+\item{q:}{MA order}
+}
+\value{
+PxxdB : Spectral estimate in dB
+
+Pxx : spectral estimate
+
+q : frequency in (0, pi)
+
+sigma_hat : BIO mm-scale estemate of the innovations
+}
 \description{
-spec_arma_est_bip_mm
+The function spec_arma_est_bip_mm(x,p,q) comuptes
+spectral estimates using the BIP mm-estimates of the
+ARMA model parameters
 }
 \note{
 File located in SpectrumEstimation_spec_arma_est_bip.R
+}
+\references{
+"Robust Statistics for Signal Processing"
+Zoubir, A.M. and Koivunen, V. and Ollila, E. and Muma, M.
+Cambridge University Press, 2018.
+
+"Bounded Influence Propagation \eqn{\tau}-Estimation: A New Robust Method for ARMA Model Estimation."
+Muma, M. and Zoubir, A.M.
+IEEE Transactions on Signal Processing, 65(7), 1712-1727, 2017.
 }

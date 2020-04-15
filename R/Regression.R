@@ -167,8 +167,10 @@ enetpath <- function(y, X, alpha=1,  L=100, eps=1e-4, intcpt=TRUE, printitn=0){
 #'
 #'File in Regression.R
 #'
+#' @importFrom stats pchisq
 #' @export
 hublasso <- function(y, X, c = NULL, lambda, b0,  sig0, reltol = 1e-5, printitn = 0, iter_max = 500){
+
   n <- nrow(X)
   p <- ncol(X)
 
@@ -402,7 +404,7 @@ Mreg <- function(y, X, lossfun = 'huber', b0 = NULL, verbose = F){
     resid[resid < 1e-6] <- 1e-6
     w <- wfun(resid / sig)
     Xstar <- X * w
-    b1 <- (t(Xstar) %*% y) / (t(Xstar) %*% X)
+    b1 <- ginv((t(Xstar) %*% X)) %*% (t(Xstar) %*% y) #(t(Xstar) %*% y) / (t(Xstar) %*% X)
 
     crit <- norm(b1 - b0, type = "2") / norm(b0, type = "2")
     if(verbose) sprintf('Mreg: crit(%4d) = %.9f\n',iter,crit)
@@ -433,6 +435,8 @@ Mreg <- function(y, X, lossfun = 'huber', b0 = NULL, verbose = F){
 #' @return  iter   : positive integer, the number of iterations of IRWLS algorithm
 #'
 #' @examples
+#'
+#'
 #'
 #' @export
 rankflasso <- function(y, X, lambda1, lambda2, b0 = NULL, printitn = 0){
@@ -471,7 +475,7 @@ rankflasso <- function(y, X, lambda1, lambda2, b0 = NULL, printitn = 0){
 
 # rankflassopath ----
 
-#' rankflassopath()
+#' rank fused Lasso regression
 #'
 #' Computes the rank fused-Lasso regression estimates for given fused
 #' penalty value lambda_2 and for a range of lambda_1 values
@@ -492,6 +496,7 @@ rankflasso <- function(y, X, lambda1, lambda2, b0 = NULL, printitn = 0){
 #'@return       lamgrid: = lambda parameters
 #'@examples
 #'
+#'rankflassopath()
 #'@export
 rankflassopath <- function(y, X, lambda2, L = 120, eps = 1e-3, printitn = F){
   n <- nrow(X)
@@ -563,12 +568,12 @@ rankflassopath <- function(y, X, lambda2, L = 120, eps = 1e-3, printitn = F){
 #' @export
 ranklasso <- function(y, X, lambda, b0 = NULL, printitn = F){
   n <- nrow(X)
-
+  p <- ncol(X)
   intcpt <- F
 
   if(is.null(b0)){
     b0 <- qr.solve(cbind(rep(1, n), X), y)
-    b0 <- b0[2:length(b0)]
+    b0 <- b0[2:length(b0), drop = FALSE]
   }
 
   B <- repmat(1:n, n)
@@ -580,8 +585,8 @@ ranklasso <- function(y, X, lambda, b0 = NULL, printitn = F){
 
   Xtilde <- X[a,] - X[b,]
   ytilde <- y[a] - y[b]
-
-  return(ladlasso(ytilde, Xtilde, lambda, intcpt, b0, printitn))
+  result <- ladlasso(ytilde, Xtilde, lambda, intcpt, b0, printitn)
+  return()
 }
 
 

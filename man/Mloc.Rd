@@ -2,13 +2,12 @@
 % Please edit documentation in R/Location_Scale.R
 \name{Mloc}
 \alias{Mloc}
-\title{Mloc computes the M-estimates of location using an auxiliary scale
- estimate. It uses the iterative reweighted least squares (IRWLS) algorithm}
+\title{M-estimate of location}
 \usage{
 Mloc(y, lossfun)
 }
 \arguments{
-\item{y}{: (numeric) data vector of size N x 1}
+\item{y}{: (numeric) data vector of size N}
 
 \item{lossfun}{: (string) either 'huber' or 'tukey' to identify the desired
 loss function}
@@ -19,4 +18,11 @@ mu_hat: M-estimate of location
 \description{
 Mloc computes the M-estimates of location using an auxiliary scale
  estimate. It uses the iterative reweighted least squares (IRWLS) algorithm
+}
+\note{
+File location : Location_Scale.R
+}
+\examples{
+Mloc(rnorm(5), 'huber')
+Mloc(rnorm(5), 'tukey')
 }

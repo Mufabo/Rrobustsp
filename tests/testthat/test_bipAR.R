@@ -39,7 +39,6 @@ test_that('bip_ar1_s', {
 })
 
 test_that('long', {
-  devtools::load_all()
   library(pracma)
   library(MASS)
   library(Matrix)

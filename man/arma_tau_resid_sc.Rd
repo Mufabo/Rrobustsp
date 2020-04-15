@@ -7,13 +7,13 @@
 arma_tau_resid_sc(x, beta_hat, p, q)
 }
 \arguments{
-\item{x:}{numeric vector. The signal}
+\item{x}{: numeric vector. The signal}
 
-\item{beta_hat:}{numeric vector, the AR and MA coefficients}
+\item{beta_hat}{: numeric vector, the AR and MA coefficients}
 
-\item{p:}{AR order}
+\item{p}{: AR order}
 
-\item{q:}{MA order}
+\item{q}{: MA order}
 }
 \value{
 a: numeric vector of residuals

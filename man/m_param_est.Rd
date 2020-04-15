@@ -7,15 +7,13 @@
 m_param_est(receive, C, Theta, param)
 }
 \arguments{
-\item{recieve:}{is the received signal}
+\item{receive:}{is the received signal}
 
 \item{Theta:}{contains the initial estimate}
 
 \item{C:}{is the regression matrix of the model y = C*x + n}
 
-\item{param.maxiters:}{maximal number of iterations}
-
-\item{param.break:}{break condition}
+\item{param:}{Named structure}
 }
 \value{
 th2: M-estimate of regression
@@ -27,9 +25,16 @@ kk: iteration index
 residual: residuals given Theta
 }
 \description{
-The function computes an M-estimator of regression using the assymetric tanh score function.
+The function computes an M-estimator of regression using the asymetric tanh score function.
+}
+\note{
+in file robustFiltering_mParamEst.R
+Used in ekf_toa_robust.
 }
 \examples{
+data("ekf_parameter")
+
+m_param_est( , parameter)
 
 }
 \references{

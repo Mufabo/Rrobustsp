@@ -2,7 +2,7 @@
 % Please edit documentation in R/Regression.R
 \name{rankflassopath}
 \alias{rankflassopath}
-\title{rankflassopath()}
+\title{rank fused Lasso regression}
 \usage{
 rankflassopath(y, X, lambda2, L = 120, eps = 0.001, printitn = F)
 }
@@ -35,4 +35,5 @@ penalty value lambda_2 and for a range of lambda_1 values
 }
 \examples{
 
+rankflassopath()
 }

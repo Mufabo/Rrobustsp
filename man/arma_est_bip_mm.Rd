@@ -31,6 +31,8 @@ file is in dependentData_armaEstBipMM.R
 }
 \examples{
 library(signal)
+library(zeallot)
+library(pracma)
 
 N <- 500
 a <- rnorm(N)

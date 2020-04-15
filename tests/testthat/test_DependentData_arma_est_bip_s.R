@@ -1,4 +1,6 @@
 test_that('long' , {
+  library(pracma)
+
   data("x_ao_mat")
   p <- 1
   q <- 0
@@ -31,3 +33,27 @@ test_that('long' , {
   # 1.8736
   c(a_bip_sc, x_filt) %<-% bip_s_resid_sc(x, beta_bip, p, q)
 })
+
+
+test_that('arma_est_bip_s ar1, no Outliers', {
+  library(pracma)
+  library(signal)
+  library(zeallot)
+  '
+  rng(0)
+  a = randn(500, 1);
+  %% AR(1)
+  p = 1;
+  q = 0;
+  x_ar1 = filter(1, [1 -.8], a);
+  '
+  load(path_test('x_ar1'))
+  load(path_test('result_s'))
+
+  p <- 1
+  q <- 0
+
+  result <- arma_est_bip_s(x_ar1, p, q)
+  expect_equal(result$cleaned_signal, c(result_s[[4]]))
+})
+

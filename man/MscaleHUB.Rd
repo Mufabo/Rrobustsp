@@ -2,20 +2,26 @@
 % Please edit documentation in R/Location_Scale.R
 \name{MscaleHUB}
 \alias{MscaleHUB}
-\title{Mscale_HUB computes Huber's M-estimate of
-  scale.}
+\title{Huber's M-estimate of scale}
 \usage{
 MscaleHUB(y, c = 1.345, max_iters = 1000, tol_err = 1e-05)
 }
 \arguments{
-\item{y:}{real valued data vector of size N x 1}
+\item{y}{: real valued data vector of size N}
 
-\item{c:}{tuning constant c>=0}
+\item{c}{: tuning constant c>=0}
 }
 \value{
-sigma_hat: Huber's M-estimate of scale
+sigma_hat : Huber's M-estimate of scale
 }
 \description{
 Mscale_HUB computes Huber's M-estimate of
-  scale.
+scale.
+}
+\note{
+File location: Location_Scale.R
+}
+\examples{
+MscaleHUB(rnorm(5))
+
 }

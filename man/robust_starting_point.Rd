@@ -12,9 +12,11 @@ robust_starting_point(x, p, q, recursion_num = 0)
 \item{p:}{AR order}
 
 \item{q:}{MA order}
+
+\item{recursion_num:}{integer. If parameter estimation is instationary, run robust_starting_point recursively on the filtered signal.}
 }
 \value{
-beta_inital: ARMA coefficient estimate
+beta_inital: ARMA coefficient estimate and the intercept
 
 cleaned_signal: cleaned signal
 }
@@ -26,5 +28,11 @@ It also computes an outlier cleaned signal using BIP-AR(p_long)
 predictions
 }
 \examples{
+data(x_ao_arma)
+library(pracma)
 
+robust_starting_point(x_ao_arma, 1, 1)
+#$beta_initial
+#ar1         ma1   intercept
+#0.81314423  0.14617580 -0.05612576
 }

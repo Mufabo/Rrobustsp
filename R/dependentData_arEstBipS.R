@@ -13,7 +13,11 @@
 #' @return a_scale_final: minimal tau scale of the innovations of BIP AR or AR
 #'
 #' @examples
+#' x <- c(0.8884 ,  -1.1471 ,  -1.0689 ,  -0.8095 ,  -2.9443 ,   1.4384  ,  0.3252 ,  -0.7549)
+#' ar_est_bip_s(x, 1)
+#' @note
 #'
+#' File location: dependentData_arEstBipS.R
 #' @references
 #'
 #' "Robust Statistics for Signal Processing"
@@ -24,7 +28,15 @@
 #' Muma, M. and Zoubir, A.M.
 #' IEEE Transactions on Signal Processing, 65(7), 1712-1727, 2017.
 #' @export
+#'
+#' @importFrom stats mad
+#' @importFrom zeallot %<-%
+#' @importFrom pracma roots
+#' @importFrom pracma polyval
 ar_est_bip_s <- function(x, P) {
+  # to avoid 'no visible binding for global variable' notes
+  ind_max2 <- temp2 <- NULL
+
   N <- length(x)
   kap2 = 0.8724286 # kap=var(eta(randn(10000,1)))
 
@@ -52,6 +64,7 @@ ar_est_bip_s <- function(x, P) {
     phi_hat <- NULL
     # AR(0) residual scale equals observation scale
     a_scale_final[1] <- m_scale(x)
+    return(list(NULL, NULL, a_scale_final))
 
   }
 

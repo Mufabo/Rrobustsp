@@ -13,7 +13,8 @@
 #' @return a_scale_final: minimal tau scale of the innovations of BIP AR or AR
 #'
 #' @examples
-#'
+#' x <- c(0.8884 ,  -1.1471 ,  -1.0689 ,  -0.8095 ,  -2.9443 ,   1.4384  ,  0.3252 ,  -0.7549)
+#' ar_est_bip_tau(x, 1)
 #' @references
 #'
 #' "Robust Statistics for Signal Processing"
@@ -23,8 +24,17 @@
 #'"Bounded Influence Propagation \eqn{\tau}-Estimation: A New Robust Method for ARMA Model Estimation."
 #' Muma, M. and Zoubir, A.M.
 #' IEEE Transactions on Signal Processing, 65(7), 1712-1727, 2017.
+#'
+#' @note
+#' File location: dependentData_arEstBipTau.R
 #' @export
+#' @importFrom stats mad
+#' @importFrom zeallot %<-%
+#' @importFrom pracma roots
 ar_est_bip_tau <- function(x, P) {
+  # to avoid no visible binding for global variable note
+  ind_max2 <- temp2 <- NULL
+
   N <- length(x)
   kap2 = 0.8724286 # kap=var(eta(randn(10000,1)))
 
@@ -49,9 +59,9 @@ ar_est_bip_tau <- function(x, P) {
 
   # P == 0 ----
   if (P == 0) {
-    phi_hat <- NULL
     # AR(0) residual scale equals observation scale
     a_scale_final[1] <- tau_scale(x)
+    return(list(NULL, NULL, a_scale_final))
 
   }
 

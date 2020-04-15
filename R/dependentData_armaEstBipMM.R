@@ -29,6 +29,8 @@
 #'
 #' @examples
 #' library(signal)
+#' library(zeallot)
+#' library(pracma)
 #'
 #' N <- 500
 #' a <- rnorm(N)
@@ -42,6 +44,7 @@
 #' file is in dependentData_armaEstBipMM.R
 #'
 #' @export
+#' @importFrom pracma lsqnonlin
 arma_est_bip_mm <- function(x, p, q, tolX = 5e-7){
   # Get starting point and residual scale from S-estimtor
   bip_s_est = arma_est_bip_s(x, p, q, tolX)

@@ -18,7 +18,6 @@
 #' @return ABi:  Fourier coefficients for cosine
 #' @return BBi:  Fourier coefficients for sine
 #'
-#' @examples
 #'
 #' @references
 #' "Robust Statistics for Signal Processing"
@@ -26,11 +25,13 @@
 #' Cambridge University Press, 2018.
 #'
 #' @note
-#'
+#' ATM takes forever
 #' File location: SpectrumEstimation_biweight_filter.R
 #'
 #' @export
 biweight_filter <- function(x){
+  # to avoid no visible binding for global variable note
+  xFRM <- ARM <- BRM <- nls <- N_Prime <- xFb2
   N <- length(x)
   xFB <- numeric(N) # filter cleaned signal
 

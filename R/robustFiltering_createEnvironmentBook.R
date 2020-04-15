@@ -6,6 +6,9 @@
 #'
 #' @export
 create_environment_book <- function(parameter, start, sigma_v){
+  # to avoid no visible binding for global variable note
+  rnorm <- NULL
+
   x <- nrow(parameter$BS)
   y <- ncol(parameter$BS)
 

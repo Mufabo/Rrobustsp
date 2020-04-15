@@ -47,8 +47,13 @@
 #' file is in dependentData_arma_Est_BipTau.R
 #'
 #' @export
+#' @importFrom zeallot %<-%
+#' @importFrom pracma roots
+#' @importFrom utils head
 arma_est_bip_tau <- function(x, p, q, tolx = 1e-8){
   result <- list()
+  # to avoid no visible binding for global variable note
+  a_bip_sc <- x_filt <- NULL
 
   if(p == 0 && q == 0){
     result$inno_scale < tau_scale(x)

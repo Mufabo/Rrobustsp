@@ -24,8 +24,12 @@ AR model parameters. It also computes an outlier cleaned signal using
 BIP-AR(P) predictions, and the M-scale of the estimated innovations
 series.
 }
+\note{
+File location: dependentData_arEstBipS.R
+}
 \examples{
-
+x <- c(0.8884 ,  -1.1471 ,  -1.0689 ,  -0.8095 ,  -2.9443 ,   1.4384  ,  0.3252 ,  -0.7549)
+ar_est_bip_s(x, 1)
 }
 \references{
 "Robust Statistics for Signal Processing"

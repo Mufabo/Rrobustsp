@@ -6,10 +6,16 @@
 #'mu_hat = arg min_mu SUM_i rho_TUK(y_i - mu)
 #'
 #'
-#'@param           y: data vector of size N x 1
+#'@param y : data vector of size N x 1
 #'
 #'
-#'@return           sig: normalized median absolute deviations scale estimate
+#'@return sig : normalized median absolute deviations scale estimate
+#'
+#'@examples
+#'madn(rnorm(5))
+#'
+#'@importFrom stats median
+#'
 #'@export
 madn <- function(y)
     {

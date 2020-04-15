@@ -2,12 +2,13 @@
 % Please edit documentation in R/Location_Scale.R
 \name{MlocHUB}
 \alias{MlocHUB}
-\title{Mloc_HUB computes Huber's M-estimate of
-  location, i.e.,}
+\title{Huber's M-estimate of location}
 \usage{
 MlocHUB(y, c = 1.345, max_iters = 1000, tol_err = 1e-05)
 }
 \arguments{
+\item{tol_err}{: scalar threshold value for stopping iteration. Default 1e-5}
+
 \item{y:}{real valued data vector of size N x 1}
 
 \item{c:}{tuning constant c>=0}
@@ -16,5 +17,16 @@ MlocHUB(y, c = 1.345, max_iters = 1000, tol_err = 1e-05)
 mu_hat: Huber's M-estimate of location
 }
 \description{
+Mloc_HUB computes Huber's M-estimate of
+  location, i.e.,
+}
+\details{
 \eqn{mu_hat = arg_{min_mu} \sum{i} rho_{HUB}(y_{i} - \mu)}
+}
+\note{
+File location : Location_Scale.R
+}
+\examples{
+MlocHUB(rnorm(4))
+
 }

@@ -7,10 +7,10 @@
 madn(y)
 }
 \arguments{
-\item{y:}{data vector of size N x 1}
+\item{y}{: data vector of size N x 1}
 }
 \value{
-sig: normalized median absolute deviations scale estimate
+sig : normalized median absolute deviations scale estimate
 }
 \description{
 madn computes the normalized median absolute deviation estimate of
@@ -18,4 +18,8 @@ scale, i.e.,
 }
 \details{
 mu_hat = arg min_mu SUM_i rho_TUK(y_i - mu)
+}
+\examples{
+madn(rnorm(5))
+
 }

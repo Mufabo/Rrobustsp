@@ -19,10 +19,12 @@
 #' @param iter_max number of iterations \cr
 #' default = 2000
 #'
-#' @return b1 numeric, the regression coefficient vector of size N
-#' @return integr, iter number of iterations
+#' @return b1: numeric, the regression coefficient vector of size N
+#' @return iter: integer, number of iterations
 #'
 #' @examples
+#'
+#' ladlasso(rnorm(8), matrix(rnorm(8*3)*5+1, 8, 3), 0.5)
 #'
 #' @note
 #'
@@ -30,7 +32,7 @@
 #' @export
 ladlasso <- function(y, X, lambda, intcpt = T, b0 = NULL, reltol = 1e-8, printitn = 0, iter_max = 2000){
   N <- nrow(X)
-  p <- ncol(X)
+  p <- if(is.null(ncol(X))) 1 else ncol(X)
 
   # make matrix sparse
   # X <- sparseMatrix(i = row(X)[row(X) != 0], j = col(X)[col(X) != 0], x=c(X))

@@ -29,9 +29,9 @@ estimates differ in L2 norm by a rel. amount less than reltol.}
 default = 2000}
 }
 \value{
-b1 numeric, the regression coefficient vector of size N
+b1: numeric, the regression coefficient vector of size N
 
-integr, iter number of iterations
+iter: integer, number of iterations
 }
 \description{
 ladlasso computes the LAD-Lasso regression estimates for given complex-
@@ -43,5 +43,7 @@ then IRWLS algorithm is used, otherwise a weighted median algorithm
 File location: regression_ladlasso.R
 }
 \examples{
+
+ladlasso(rnorm(8), matrix(rnorm(8*3)*5+1, 8, 3), 0.5)
 
 }

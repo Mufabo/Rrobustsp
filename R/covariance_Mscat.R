@@ -5,8 +5,8 @@
 #' the loss function (i.e., q for Huber's or degrees of freedom v for
 #' the t-distribution).
 #'
-#' @param x : n x p matrix
-#' @param loss : 'Huber', 't_loss' or 'Tyler'
+#' @param x: n x p matrix
+#' @param loss: 'Huber', 't_loss' or 'Tyler'
 #' @param losspar: parameter of the loss function: q in [0,1) for Huber and
 #'          d.o.f. v >= 0 for t-loss. For Tyler you do not need to specify
 #'          this value. Parameter q determines the treshold
@@ -24,22 +24,12 @@
 #' @return     flag: flag (true/false) for convergence
 #'
 #' @examples
+#' Mscat(matrix(rnorm(15), 5, 3), loss = 'Huber')
+#' @note
+#' File location : covariance_Mscat.R
 #'
 #' @export
 Mscat <- function(x, loss, losspar = NULL, invC = NULL, printitn = 0){
-
-  if(! loss %in% c('Huber', 't_loss', 'Tyler')){
-    sprintf('invalid loss. Choose one of Huber, t_loss, Tyler. Your loss is %s', loss)
-  }
-  if(is.complex(losspar) | is.infinite(losspar) | (0>losspar) ){
-    if(loss == 'Huber' && (losspar>1)){
-      sprintf('Argument losspar needs to be a scalar in [0, 1[')
-      return(list(NULL, NULL, NULL, NULL))
-    }
-    if(loss == 't_loss'){
-      sprintf('Argument losspar needs to be a scalar greater zero')
-      return(list(NULL, NULL, NULL, NULL))}
-  }
 
   n <- nrow(x)
   p <- ncol(x)
@@ -59,10 +49,11 @@ Mscat <- function(x, loss, losspar = NULL, invC = NULL, printitn = 0){
   }
 
   # loss functions below
-  switch(loss,
-         Huber = tmp <- loss_Huber(n, p, losspar, realdata),
-         Tyler = tmp <- loss_t_loss(n, p, losspar, realdata),
-         t_loss= tmp <- loss_t_loss(n, p, losspar, realdata)
+  tmp <- switch(loss,
+          Huber =  loss_Huber(n, p, losspar, realdata),
+          Tyler =  loss_t_loss(n, p, losspar, realdata),
+          t_loss=  loss_t_loss(n, p, losspar, realdata),
+          stop('invalid loss. Choose one of Huber, t_loss, Tyler.')
          )
 
   MAX_ITER <- 1000
@@ -89,7 +80,11 @@ Mscat <- function(x, loss, losspar = NULL, invC = NULL, printitn = 0){
 }
 
 loss_Huber <- function(n, p, losspar, realdata){
-  if(is.null(losspar)) q <- 0.9 else q <- losspar
+  q <- if(is.null(losspar)) 0.9 else losspar
+
+  if(is.complex(q) | is.infinite(q) | (0>q && q>1) ){
+      stop('Argument losspar needs to be a scalar in [0, 1[')
+    }
 
   ufun <- function(t, c) (t <= c) + (c/t) * (t > c)
 
@@ -107,7 +102,12 @@ loss_Huber <- function(n, p, losspar, realdata){
 }
 
 loss_t_loss <- function(n, p, losspar, realdata){
-  if(is.null(losspar)) upar <- 3 else upar <- losspar
+  upar <- if(is.null(losspar)) 3 else losspar
+
+  if(is.complex(upar) | is.infinite(upar) | (0>upar) ){
+      stop('Argument losspar needs to be a scalar greater zero')
+  }
+
 
   if(realdata && upar != 0){
     ufun <- function(t, v) 1 / (v + t)

@@ -9,13 +9,22 @@
 #' @param x: numeriv vector, the time series / signal
 #' @param p: AR order
 #' @param q: MA order
+#' @param recursion_num: integer. If parameter estimation is instationary, run robust_starting_point recursively on the filtered signal.
 #'
-#' @return beta_inital: ARMA coefficient estimate
+#' @return beta_inital: ARMA coefficient estimate and the intercept
 #' @return cleaned_signal: cleaned signal
 #'
 #' @examples
+#' data(x_ao_arma)
+#' library(pracma)
 #'
+#' robust_starting_point(x_ao_arma, 1, 1)
+#' #$beta_initial
+#' #ar1         ma1   intercept
+#' #0.81314423  0.14617580 -0.05612576
 #' @export
+#' @importFrom pracma polyval
+#' @importFrom pracma polyfit
 robust_starting_point <- function(x, p, q, recursion_num = 0){
   # usually a short AR model provides best results.
   # Change to longer model, if necessary.

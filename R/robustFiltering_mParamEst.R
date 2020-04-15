@@ -1,13 +1,12 @@
 #' m_param_est
 #'
-#' The function computes an M-estimator of regression using the assymetric tanh score function.
+#' The function computes an M-estimator of regression using the asymetric tanh score function.
 #'
 #'
-#' @param recieve: is the received signal
+#' @param receive: is the received signal
 #' @param Theta: contains the initial estimate
 #' @param C: is the regression matrix of the model y = C*x + n
-#' @param param.maxiters: maximal number of iterations
-#' @param param.break: break condition
+#' @param param: Named structure
 #'
 #'
 #' @return th2: M-estimate of regression
@@ -25,7 +24,13 @@
 #'   Hammes, U., Wolsztynski, E., and Zoubir, A.M.
 #'   IEEE Journal on Selected Topics in Signal Processing, 3(5), 889-901, 2009.
 #'
-#'@examples
+#' @note
+#' in file robustFiltering_mParamEst.R
+#' Used in ekf_toa_robust.
+#' @examples
+#' data("ekf_parameter")
+#'
+#' m_param_est( , parameter)
 #'
 #'@export
 m_param_est <- function(receive, C, Theta, param){

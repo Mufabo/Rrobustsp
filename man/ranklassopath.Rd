@@ -41,16 +41,26 @@ stats: structure with following fields:
 ranklassopath computes the rank LAD-Lasso regularization path (over grid
                                                                  of penalty parameter values). Uses IRWLS algorithm.
 }
+\note{
+File location : regression_ranklassopath.R
+}
 \examples{
-y <- 1:5
-X <- matrix(rnorm(15),5,3)
+data('prostate')
 
-tmp <- ranklassopath(y, X)
+X <- prostate$X
+y <- c(prostate$y)
 
+namess <- unlist(prostate$names)
 
-tmp[[1]] # B
-tmp[[2]] # B0
-tmp[[3]]['GMeAD'] # stats fiedl GMeAD
+n <- nrow(X)
+p <- ncol(X)
 
+Xone <- cbind(rep(1,n), X)
+LSE <- qr.solve(Xone, y) # Least squares estimate
 
+GRlen <- 120
+
+yout <- y
+yout[1] <- yout[1] + 55
+ranklassopath(yout, X)
 }

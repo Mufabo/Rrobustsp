@@ -24,18 +24,27 @@
 #'             gBIC = generalized Bayesian information criterion (gBIC) value
 #'                  for each lambda parameter on the grid.
 #'
-#' @examples
-#' y <- 1:5
-#' X <- matrix(rnorm(15),5,3)
+#'@examples
+#' data('prostate')
 #'
-#' tmp <- ranklassopath(y, X)
+#' X <- prostate$X
+#' y <- c(prostate$y)
 #'
+#' namess <- unlist(prostate$names)
 #'
-#' tmp[[1]] # B
-#' tmp[[2]] # B0
-#' tmp[[3]]['GMeAD'] # stats fiedl GMeAD
+#' n <- nrow(X)
+#' p <- ncol(X)
 #'
+#' Xone <- cbind(rep(1,n), X)
+#' LSE <- qr.solve(Xone, y) # Least squares estimate
 #'
+#' GRlen <- 120
+#'
+#' yout <- y
+#' yout[1] <- yout[1] + 55
+#' ranklassopath(yout, X)
+#' @note
+#' File location : regression_ranklassopath.R
 #' @export
 ranklassopath <- function(y, X, L = 120, eps = 1e-3, reltol = 1e-7, printitn = F){
   n <- nrow(X)

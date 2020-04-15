@@ -81,10 +81,10 @@ arma_s_resid <- function(x, beta_hat, p, q){
 # arma_tau_resid_sc ----
 #' arma_tau_resid_sc
 #'
-#' @param x: numeric vector. The signal
-#' @param beta_hat: numeric vector, the AR and MA coefficients
-#' @param p: AR order
-#' @param q: MA order
+#' @param x : numeric vector. The signal
+#' @param beta_hat : numeric vector, the AR and MA coefficients
+#' @param p : AR order
+#' @param q : MA order
 #'
 #'
 #' @return a: numeric vector of residuals
@@ -110,6 +110,8 @@ arma_s_resid <- function(x, beta_hat, p, q){
 #' File is in dependentData_Auxiliary_armaResid.R
 #'
 #' @export
+#' @importFrom pracma or
+#' @importFrom pracma roots
 arma_tau_resid_sc <- function(x, beta_hat, p, q){
   # phi_hat := AR coefficients
   if(0 < p){phi_hat <- beta_hat[1:p]} else phi_hat <- numeric(0)
@@ -377,14 +379,14 @@ bip_s_resid_sc <- function(x, beta_hat, p, q){
 
 
   if(r == 0) {
-    return(list(x_sc, numeric(0)))
+    return(list(x_sc, x))
     # a_bip <- x
     # a_sc_bip <- x_sc
   }
   else{
     if(sum(abs(roots(c(1,-phi_hat))) > 1) | sum(abs(roots(c(1,-theta_hat))) > 1)) {
       a_bip_sc <- 10^10
-      return(list(a_bip_sc, numeric(0)))
+      return(list(a_bip_sc, x))
     }
     else{
       #ARMA

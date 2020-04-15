@@ -1,17 +1,30 @@
+#'  M-estimate of location
+#'
 #'  Mloc computes the M-estimates of location using an auxiliary scale
 #'  estimate. It uses the iterative reweighted least squares (IRWLS) algorithm
 #'
 #'
-#'@param         y : (numeric) data vector of size N x 1
-#'@param   lossfun : (string) either 'huber' or 'tukey' to identify the desired
+#'@param  y : (numeric) data vector of size N
+#'@param  lossfun : (string) either 'huber' or 'tukey' to identify the desired
 #'             loss function
 #'
-#'@return             mu_hat: M-estimate of location
+#'@return mu_hat: M-estimate of location
+#'
+#'@examples
+#'Mloc(rnorm(5), 'huber')
+#'Mloc(rnorm(5), 'tukey')
+#'@note
+#'File location : Location_Scale.R
+#'
 #' @export
+#' @importFrom stats median
+#' @importFrom MASS ginv
 Mloc <- function(y, lossfun){
-  return (Mreg(y, numeric(length(y)), lossfun, median(y)))
+  return (Mreg(y, matrix(rep(1, length(y))), lossfun, median(y))[[1]])
 }
 
+#'   Huber's M-estimate of location
+#'
 #'   Mloc_HUB computes Huber's M-estimate of
 #'   location, i.e.,
 #'
@@ -19,13 +32,19 @@ Mloc <- function(y, lossfun){
 #'
 #'
 #'
-#'@param            y: real valued data vector of size N x 1
-#'@param             c: tuning constant c>=0
+#' @param y: real valued data vector of size N x 1
+#' @param c: tuning constant c>=0
+#' @param tol_err : scalar threshold value for stopping iteration. Default 1e-5
 #'
+#' @return             mu_hat: Huber's M-estimate of location
 #'
-#'@return             mu_hat: Huber's M-estimate of location
+#' @examples
+#' MlocHUB(rnorm(4))
+#'
+#' @note
+#' File location : Location_Scale.R
 #' @export
-MlocHUB <- function(y,c=1.345, max_iters=1000, tol_err=1e-5){
+MlocHUB <- function(y, c=1.345, max_iters=1000, tol_err=1e-5){
   # previously computated scale estimate
   sigma_0 <- madn(y)
 
@@ -43,24 +62,34 @@ MlocHUB <- function(y,c=1.345, max_iters=1000, tol_err=1e-5){
   return (mu_n)
 }
 
-#'   Mlocscale computes Huber's M-estimates of location and scale.
+#' Huber's M-estimates of location and scale
+#'
+#' Mlocscale computes Huber's M-estimates of location and scale.
 #'
 #'
-#'@param             y: real valued data vector of size N x 1
-#'@param             c: tuning constant c>=0
+#'@param y : real valued data vector of size N
+#'@param c : tuning constant c>=0. Default is Null
 #'
 #'
-#'@return             mu_hat: Huber's M-estimate of location
-#'@return             sigma_hat: Huber's M-estimate of scale
+#'@return mu_hat : Huber's M-estimate of location
+#'@return sigma_hat : Huber's M-estimate of scale
+#'@return iter : integer. Number of iterations
+#'@examples
+#'MlocscaleHUB(rnorm(5))
+#'
+#'@note
+#'File location : Location_Scale.R
 #' @export
-Mlocscale <- function(y, c=NULL){
+MlocscaleHUB <- function(y, c=NULL){
   # approx 95 efficiency for Gaussian errors
   if(is.null(c)){
     if (is.complex(y)) c<-1.215 else c<-1.3415
   }
-  return (hubreg(y, rep(1, length(y)), c, madn(y), median(y)))
+  return (hubreg(y, matrix(rep(1, length(y))), c, madn(y), median(y)))
 }
 
+#'  Tukey's M-estimate of location
+#'
 #'  Mloc_TUK computes Tukey's M-estimate of
 #'   location, i.e.,
 #'
@@ -68,12 +97,18 @@ Mlocscale <- function(y, c=NULL){
 #'
 #'
 #'
-#'@param             y: real valued data vector of size N x 1
-#'@param             c: tuning constant c>=0
+#'@param y : real valued data vector of size N x 1
+#'@param c : tuning constant c>=0
 #'
 #'
-#'@return             mu_hat: Tukey's M-estimate of location
-#'   @export
+#'@return mu_hat : Tukey's M-estimate of location
+#'
+#'@examples
+#'MlocTUK(rnorm(5))
+#'
+#'@note
+#'File location: Location_Scale.R
+#'@export
 MlocTUK <- function(y, c=4.685, max_iters=1000, tol_err=1e-5){
   # previously computed scale estimate
   sigma_0 <- madn(y)
@@ -92,17 +127,27 @@ MlocTUK <- function(y, c=4.685, max_iters=1000, tol_err=1e-5){
   return (mu_n)
 }
 
-#'   Mscale_HUB computes Huber's M-estimate of
-#'   scale.
+#' Huber's M-estimate of scale
+#'
+#' Mscale_HUB computes Huber's M-estimate of
+#' scale.
 #'
 #'
 #'
-#'@param             y: real valued data vector of size N x 1
-#'@param             c: tuning constant c>=0
+#'@param y : real valued data vector of size N
+#'@param c : tuning constant c>=0
 #'
 #'
-#'@return             sigma_hat: Huber's M-estimate of scale
-#' @export
+#'@return sigma_hat : Huber's M-estimate of scale
+#'
+#'
+#'@examples
+#'MscaleHUB(rnorm(5))
+#'
+#'@note
+#'File location: Location_Scale.R
+#'
+#'@export
 MscaleHUB <- function(y, c=1.345, max_iters=1000, tol_err=1e-5){
   # initial scale estimate
   sigma_n <- madn(y)
@@ -130,18 +175,25 @@ MscaleHUB <- function(y, c=1.345, max_iters=1000, tol_err=1e-5){
 }
 
 
-#'   Mscale_TUK computes Tukey's M-estimate of
-#'   scale.
+#' Tukey's M-estimate of scale
+#'
+#' Mscale_TUK computes Tukey's M-estimate of
+#' scale.
 #'
 #'
 #'
-#'@param             y: real valued data vector of size N x 1
-#'@param             c: tuning constant c>=0
+#'@param y : real valued data vector of size N x 1
+#'@param c : tuning constant c>=0. Default = 4.685
 #'
+#'@return sigma_hat : Tukey's M-estimate of scale
 #'
-#'@return             sigma_hat: Tukey's M-estimate of scale
-#' @export
-MscaleTUK <- function(y, c=4.685, max_iters=1000, tol_err=1e-5){
+#'@examples
+#'MscaleTUK(rnorm(5))
+#'
+#'@note
+#'File location : Location_Scale.R
+#'@export
+MscaleTUK <- function(y, c = 4.685, max_iters = 1000, tol_err = 1e-5){
   # initial scale estimate
   sigma_n <- madn(y)
 

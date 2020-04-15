@@ -3,7 +3,7 @@ Type: Package
 Title: Robust Signal Processing
 Version: 0.1.0
 Author: Fatih Bostanci
-Maintainer: Fatih Bostanci <yourself@somewhere.net>
+Maintainer: Fatih Bostanci <fatih.bostanci@hotmail.de>
 Description: Based on the Robust signal processing Matlab toolbox by Muma et al.
 License: MIT
 Encoding: UTF-8
@@ -17,7 +17,8 @@ Imports:
   zeallot,
   TSA,
   signal,
-  purrr
+  purrr,
+  stats
 Suggests: 
     testthat
 RoxygenNote: 6.1.1

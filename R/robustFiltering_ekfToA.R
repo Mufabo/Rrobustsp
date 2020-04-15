@@ -12,7 +12,36 @@
 #' @return P : aposteriors covariance
 #'
 #' @examples
+#' library(zeallot)
+#' library(Matrix)
+#' library(MASS)
+#' library(pracma)
+#' library(tensorA)
+#' library(Rrobustsp)
 #'
+#'
+#' data("robfilexamp")
+#' data("ekf_parameter")
+#'
+#' ekf <- tmp$ekf
+#' rekf <- tmp$rekf
+#'
+#' names(ekf) <- dimnames(ekf)[[1]]
+#' names(rekf)<- dimnames(rekf)[[1]]
+#'
+#' theta_init <- tmp$theta.init
+#'
+#' rekf$break.cond <- rekf$'break'[1,1]
+#' rekf$c1 <- rekf$c1[1,1]
+#' rekf$c2 <- rekf$c2[1,1]
+#' rekf$var.est <- rekf$var.est[1,1]
+#' rekf$dim <- rekf$dim[1,1]
+#' rekf$max.iters <- rekf$max.iters[1, 1]
+#' rekf$x1 <- rekf$x1[1,1]
+#'
+#' # %<-% is the unpacking assignment from library zeallot
+#
+#' c(ekf_th, p_th, pm_th, param_th) %<-% ekf_toa(tmp$measureddistances, theta_init, tmp$BS, ekf)
 #' @references
 #' "Robust Statistics for Signal Processing"
 #'  Zoubir, A.M. and Koivunen, V. and Ollila, E. and Muma, M.
@@ -21,8 +50,14 @@
 #'  "Robust Tracking and Geolocation for Wireless Networks in NLOS Environments."
 #'   Hammes, U., Wolsztynski, E., and Zoubir, A.M.
 #'   IEEE Journal on Selected Topics in Signal Processing, 3(5), 889-901, 2009.
+#' @note
+#' File location: robustFiltering_ekfToA.R
 #' @export
+#' @importFrom tensorA to.tensor
+#' @importFrom stats rnorm
 ekf_toa <- function(r_ges, theta_init, BS, parameter = NULL){
+
+
   if(is.null(parameter)){
     print('Using default parameters')
     sigma_v <- 1

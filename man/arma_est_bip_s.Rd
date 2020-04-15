@@ -37,7 +37,7 @@ file is in dependentData_armaEstBipS.R
 }
 \examples{
 library(signal)
-
+library(pracma)
 N <- 500
 a <- rnorm(N)
 p <- 1
