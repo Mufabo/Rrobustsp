@@ -376,7 +376,7 @@ ladreg <- function(y, X, intcpt = T, b0 = NULL, printitn = 0){
 #' @export
 Mreg <- function(y, X, lossfun = 'huber', b0 = NULL, verbose = F){
 
-  if(is.null(b0)) b0 <- ladreg(y, X, F)$b1[[1]]
+  if(is.null(b0)) b0 <- ladreg(y, X, F)$b1
 
   # Compute the auxiliary scale estimate as
   if(is.complex(y)) const <- 1.20112 else const <- 1.4815
