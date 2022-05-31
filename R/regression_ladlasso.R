@@ -71,7 +71,7 @@ ladlasso <- function(y, X, lambda, intcpt = T, b0 = NULL, reltol = 1e-8, printit
       if(intcpt) X <- rbind(X, cbind(rep(0, p), diag(lambda, p, p))) else X <- rbind(X, diag(lambda, p, p))
     }
 
-    if(class(X) == "matrix"){
+    if(class(X)[1] == "matrix"){
       sweep2 <- function(x, y){sweep(x, MARGIN = 1, y, FUN = '/')}
       solve2 <- function(Xstar, X, y){solve(t(Xstar) %*% X, (t(Xstar) %*% y))}
       }
