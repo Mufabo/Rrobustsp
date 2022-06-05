@@ -376,7 +376,7 @@ ladreg <- function(y, X, intcpt = T, b0 = NULL, printitn = 0){
 #' @export
 Mreg <- function(y, X, lossfun = 'huber', b0 = NULL, verbose = F){
 
-  if(is.null(b0)) b0 <- ladreg(y, X, F)$b1[[1]]
+  if(is.null(b0)) b0 <- ladreg(y, X, F)$b1
 
   # Compute the auxiliary scale estimate as
   if(is.complex(y)) const <- 1.20112 else const <- 1.4815
@@ -403,8 +403,8 @@ Mreg <- function(y, X, lossfun = 'huber', b0 = NULL, verbose = F){
 
     resid[resid < 1e-6] <- 1e-6
     w <- wfun(resid / sig)
-    Xstar <- X * w
-    b1 <- ginv((t(Xstar) %*% X)) %*% (t(Xstar) %*% y) #(t(Xstar) %*% y) / (t(Xstar) %*% X)
+    Xstar <- X * c(w) # w is a 1xN matrix, not a vector
+    b1 <- MASS::ginv((t(Xstar) %*% X)) %*% (t(Xstar) %*% y) #(t(Xstar) %*% y) / (t(Xstar) %*% X)
 
     crit <- norm(b1 - b0, type = "2") / norm(b0, type = "2")
     if(verbose) sprintf('Mreg: crit(%4d) = %.9f\n',iter,crit)
